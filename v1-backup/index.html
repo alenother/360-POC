@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tata AIG Health Insurance - Personalised Quote</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <!-- Demo Scenario Selector (for testing/demo only) -->
+  <div id="demo-bar" class="demo-bar">
+    <div class="demo-bar-inner">
+      <span class="demo-label">Demo Mode</span>
+      <select id="scenario-selector">
+        <option value="1">1 - Price-conscious buyer</option>
+        <option value="2">2 - High-value seeker</option>
+        <option value="3">3 - EMI / instalment seeker</option>
+        <option value="4">4 - No-claim bonus maximiser</option>
+        <option value="5">5 - Salaried with employer cover</option>
+        <option value="6">6 - Self-employed / freelancer</option>
+        <option value="7">7 - Government / PSU employee</option>
+        <option value="8">8 - NRI / global professional</option>
+        <option value="9">9 - Family floater buyer</option>
+        <option value="10">10 - Newly married couple</option>
+        <option value="11">11 - Expecting parent</option>
+        <option value="12">12 - Parent covering seniors</option>
+        <option value="13">13 - Young single individual</option>
+        <option value="14">14 - Pre-existing: diabetes</option>
+        <option value="15">15 - Pre-existing: cardiac</option>
+        <option value="16">16 - Critical illness risk</option>
+        <option value="17">17 - Wellness seeker</option>
+        <option value="18">18 - Mental health seeker</option>
+        <option value="19">19 - Frequent traveller</option>
+        <option value="20" selected>20 - First-time buyer</option>
+        <option value="21">21 - Policy switcher</option>
+        <option value="22">22 - Top-up seeker</option>
+        <option value="23">23 - Lapsed policyholder</option>
+        <option value="24">24 - Renewal-ready customer</option>
+        <option value="25">25 - Comparison-fatigued</option>
+        <option value="26">26 - Cart abandoner</option>
+        <option value="27">27 - Referral buyer</option>
+        <option value="28">28 - Mobile-first / low-bandwidth</option>
+        <option value="29">29 - Agent call - no time</option>
+        <option value="30">30 - DIY buyer</option>
+        <option value="31">31 - Tier-2/3 city</option>
+        <option value="32">32 - Metro high-income</option>
+      </select>
+      <button id="toggle-default" class="demo-toggle">Show Default</button>
+    </div>
+  </div>
+
+  <!-- ZONE 1: Header Bar -->
+  <header class="header-bar" id="zone-header">
+    <div class="header-inner">
+      <div class="header-logo">
+        <div class="logo-mark">
+          <span class="logo-tata">TATA</span>
+          <span class="logo-aig">AIG</span>
+        </div>
+        <span class="logo-subtitle">Health Insurance</span>
+      </div>
+      <button class="help-btn" id="help-btn">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6A19.79 19.79 0 012.12 4.18 2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.362 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.338 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+        <span id="help-btn-text">Need Help?</span>
+      </button>
+    </div>
+    <!-- TIA Assistant Greeting -->
+    <div class="tia-greeting" id="tia-greeting">
+      <div class="tia-avatar">
+        <svg width="32" height="32" viewBox="0 0 40 40" fill="none">
+          <circle cx="20" cy="20" r="20" fill="#E8F4FD"/>
+          <circle cx="20" cy="16" r="7" fill="#2E75B6"/>
+          <path d="M8 34c0-6.627 5.373-12 12-12s12 5.373 12 12" fill="#2E75B6"/>
+          <circle cx="17" cy="15" r="1.5" fill="white"/>
+          <circle cx="23" cy="15" r="1.5" fill="white"/>
+          <path d="M17 19.5c1.5 1.5 4.5 1.5 6 0" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+        <span class="tia-label">TIA</span>
+      </div>
+      <p class="tia-text" id="tia-text">Your personalised quote is ready!</p>
+    </div>
+  </header>
+
+  <!-- Scenario Banner (Zone 8 - New Element, placed below TIA) -->
+  <div class="scenario-banner" id="scenario-banner" style="display:none;">
+    <div class="scenario-banner-inner">
+      <h2 class="banner-headline" id="banner-headline"></h2>
+      <p class="banner-body" id="banner-body"></p>
+    </div>
+  </div>
+
+  <!-- Referral Discount Banner (Zone 8) -->
+  <div class="referral-banner" id="referral-banner" style="display:none;">
+    <div class="referral-inner">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M9 12l2 2 4-4" stroke="#16a34a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="12" r="10" stroke="#16a34a" stroke-width="2"/></svg>
+      <div>
+        <strong id="referral-text"></strong>
+        <p class="referral-social">Trusted by 2 crore+ families</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Plan Resumption Banner (Zone 8) -->
+  <div class="resumption-banner" id="resumption-banner" style="display:none;">
+    <div class="resumption-inner">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 8v4l3 3" stroke="#2563eb" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="12" r="10" stroke="#2563eb" stroke-width="2"/></svg>
+      <p>Your policy was almost active. Same premium, same benefits. <strong>One step left.</strong></p>
+    </div>
+  </div>
+
+  <main class="main-content">
+
+    <!-- ZONE 2: Policy Configuration Bar -->
+    <section class="policy-config" id="zone-policy-config">
+      <div class="config-row">
+        <div class="config-item">
+          <label class="config-label">Policy For</label>
+          <div class="config-value" id="policy-for">
+            <span id="policy-for-text">Self - 400001</span>
+            <button class="edit-btn" aria-label="Edit policy members">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+            </button>
+          </div>
+        </div>
+        <div class="config-item">
+          <label class="config-label">Sum Insured</label>
+          <div class="si-selector" id="si-selector">
+            <button class="si-option" data-si="5">5L</button>
+            <button class="si-option" data-si="10">10L</button>
+            <button class="si-option active" data-si="15">15L</button>
+            <button class="si-option" data-si="25">25L</button>
+            <button class="si-option" data-si="50">50L</button>
+            <button class="si-option" data-si="100">1Cr</button>
+          </div>
+          <a href="#" class="find-value-link" id="find-value-link">Find Right Value</a>
+        </div>
+        <div class="config-item">
+          <label class="config-label">Policy Tenure</label>
+          <div class="tenure-toggle" id="tenure-toggle">
+            <button class="tenure-option active" data-tenure="1">1 yr</button>
+            <button class="tenure-option" data-tenure="2">2 yrs</button>
+            <button class="tenure-option" data-tenure="3">3 yrs</button>
+          </div>
+          <span class="tenure-badge" id="tenure-badge" style="display:none;"></span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ZONE 3: Plan Comparison Cards -->
+    <section class="plan-cards-section" id="zone-plan-cards">
+      <div class="plan-cards-container" id="plan-cards-container">
+        <!-- Plan cards are rendered dynamically -->
+      </div>
+    </section>
+
+    <!-- Zone 8: Annual-to-Daily Cost Converter -->
+    <div class="cost-converter" id="cost-converter" style="display:none;">
+      <h3 class="z8-title">See what it costs per day</h3>
+      <div class="converter-display">
+        <div class="converter-tabs">
+          <button class="conv-tab active" data-period="daily">Per Day</button>
+          <button class="conv-tab" data-period="monthly">Per Month</button>
+          <button class="conv-tab" data-period="annual">Per Year</button>
+        </div>
+        <div class="converter-amount" id="converter-amount">
+          <span class="converter-rupee">&#8377;</span>
+          <span class="converter-value" id="converter-value">18</span>
+          <span class="converter-period" id="converter-period">/day</span>
+        </div>
+        <div class="converter-bar">
+          <div class="converter-bar-fill" id="converter-bar-fill"></div>
+        </div>
+        <p class="converter-note">Less than a cup of coffee for complete health protection</p>
+      </div>
+    </div>
+
+    <!-- Zone 8: Coverage Gap Visualiser -->
+    <div class="gap-visualiser" id="gap-visualiser" style="display:none;">
+      <h3 class="z8-title">Your Coverage Gap</h3>
+      <div class="gap-visual">
+        <div class="gap-bar-container">
+          <div class="gap-bar-segment gap-have">
+            <span class="gap-label">What you have</span>
+            <span class="gap-amount" id="gap-have-amount">&#8377;5L</span>
+          </div>
+          <div class="gap-bar-segment gap-gap">
+            <span class="gap-label">Gap</span>
+            <span class="gap-amount" id="gap-gap-amount">&#8377;7L</span>
+          </div>
+          <div class="gap-bar-segment gap-need">
+            <span class="gap-label">What you need</span>
+            <span class="gap-amount" id="gap-need-amount">&#8377;12L</span>
+          </div>
+        </div>
+        <p class="gap-note" id="gap-note">Your employer covers &#8377;5L. An ICU stay costs &#8377;12L. Close the gap with a top-up.</p>
+      </div>
+    </div>
+
+    <!-- Zone 8: NCB Growth Calculator -->
+    <div class="ncb-calculator" id="ncb-calculator" style="display:none;">
+      <h3 class="z8-title">Watch Your Cover Grow</h3>
+      <div class="ncb-visual">
+        <div class="ncb-timeline">
+          <div class="ncb-year" data-year="1">
+            <div class="ncb-bar" style="height:20%"></div>
+            <span class="ncb-label">Yr 1</span>
+            <span class="ncb-value">&#8377;10L</span>
+          </div>
+          <div class="ncb-year" data-year="2">
+            <div class="ncb-bar" style="height:35%"></div>
+            <span class="ncb-label">Yr 2</span>
+            <span class="ncb-value">&#8377;12.5L</span>
+          </div>
+          <div class="ncb-year" data-year="3">
+            <div class="ncb-bar" style="height:50%"></div>
+            <span class="ncb-label">Yr 3</span>
+            <span class="ncb-value">&#8377;15L</span>
+          </div>
+          <div class="ncb-year" data-year="4">
+            <div class="ncb-bar" style="height:75%"></div>
+            <span class="ncb-label">Yr 4</span>
+            <span class="ncb-value">&#8377;17.5L</span>
+          </div>
+          <div class="ncb-year" data-year="5">
+            <div class="ncb-bar" style="height:100%"></div>
+            <span class="ncb-label">Yr 5</span>
+            <span class="ncb-value">&#8377;20L</span>
+          </div>
+        </div>
+        <p class="ncb-note">50% NCB per claim-free year. Your sum insured can <strong>double in 5 years</strong>.</p>
+      </div>
+    </div>
+
+    <!-- Zone 8: Maternity Timeline -->
+    <div class="maternity-timeline" id="maternity-timeline" style="display:none;">
+      <h3 class="z8-title">Your Maternity Cover Timeline</h3>
+      <div class="mat-visual">
+        <div class="mat-steps">
+          <div class="mat-step active">
+            <div class="mat-dot"></div>
+            <div class="mat-step-content">
+              <strong>Buy Today</strong>
+              <span>Policy starts immediately</span>
+            </div>
+          </div>
+          <div class="mat-connector"></div>
+          <div class="mat-step">
+            <div class="mat-dot"></div>
+            <div class="mat-step-content">
+              <strong>Waiting Period</strong>
+              <span>9-month waiting period begins</span>
+            </div>
+          </div>
+          <div class="mat-connector"></div>
+          <div class="mat-step highlight">
+            <div class="mat-dot"></div>
+            <div class="mat-step-content">
+              <strong>Maternity Cover Active</strong>
+              <span>Full maternity benefits available</span>
+            </div>
+          </div>
+        </div>
+        <div class="mat-urgency">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#d97706" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+          Every day you wait is a day the clock isn't running.
+        </div>
+      </div>
+    </div>
+
+    <!-- Zone 8: Lapse Consequence Callout -->
+    <div class="lapse-callout" id="lapse-callout" style="display:none;">
+      <h3 class="z8-title">What Happens If You Lapse</h3>
+      <div class="lapse-visual">
+        <div class="lapse-items">
+          <div class="lapse-item danger">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M15 9l-6 6M9 9l6 6"/></svg>
+            <span>Waiting periods restart from zero</span>
+          </div>
+          <div class="lapse-item danger">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M15 9l-6 6M9 9l6 6"/></svg>
+            <span>All accumulated NCB lost</span>
+          </div>
+          <div class="lapse-item danger">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M15 9l-6 6M9 9l6 6"/></svg>
+            <span>Premium increases with age</span>
+          </div>
+        </div>
+        <div class="lapse-offer">
+          <strong>Renew now and keep your benefits intact.</strong>
+          <span>20% Favorable Experience Discount available.</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Zone 8: DIY Mistake Checker -->
+    <div class="diy-checker" id="diy-checker" style="display:none;">
+      <div class="diy-inner">
+        <p class="diy-headline">Most people who buy without advice miss at least one critical add-on.</p>
+        <div class="diy-mistakes">
+          <div class="diy-item">
+            <span class="diy-num">1</span>
+            <span>Skipping consumables cover (syringes, PPE, gloves)</span>
+          </div>
+          <div class="diy-item">
+            <span class="diy-num">2</span>
+            <span>Choosing too low a sum insured for their city</span>
+          </div>
+          <div class="diy-item">
+            <span class="diy-num">3</span>
+            <span>Not adding critical illness rider</span>
+          </div>
+        </div>
+        <button class="diy-cta">A 10-minute call fixes that</button>
+      </div>
+    </div>
+
+    <!-- Zone 8: Callback Scheduler -->
+    <div class="callback-scheduler" id="callback-scheduler" style="display:none;">
+      <h3 class="z8-title">Choose Your Callback Time</h3>
+      <div class="callback-slots">
+        <button class="slot-btn">
+          <span class="slot-time">Today, 2:00 PM</span>
+          <span class="slot-label">In 2 hours</span>
+        </button>
+        <button class="slot-btn">
+          <span class="slot-time">Today, 5:00 PM</span>
+          <span class="slot-label">This evening</span>
+        </button>
+        <button class="slot-btn">
+          <span class="slot-time">Tomorrow, 10:00 AM</span>
+          <span class="slot-label">Morning</span>
+        </button>
+      </div>
+      <p class="callback-note">Your advisor saved your progress.</p>
+    </div>
+
+    <!-- ZONE 4: Detailed Comparison Link -->
+    <section class="comparison-link-section" id="zone-comparison">
+      <a href="#" class="comparison-link" id="comparison-link">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+        View Detailed Comparison
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+      </a>
+      <!-- Comparison-fatigued banner (Scenario 25) -->
+      <div class="comparison-fatigue-banner" id="comparison-fatigue-banner" style="display:none;">
+        <p>We've done the research for you — <strong id="fatigue-plan-name">MediCare Premier</strong> is your best match.</p>
+      </div>
+    </section>
+
+    <!-- ZONE 5: Unable to Decide / Social Proof -->
+    <section class="social-proof-section" id="zone-social-proof">
+      <h3 class="section-title" id="decide-title">Unable to decide?</h3>
+      <div class="decide-options" id="decide-options">
+        <a href="#" class="decide-option">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#2E75B6" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          <div>
+            <strong>In-person visit</strong>
+            <span>Meet an advisor near you</span>
+          </div>
+        </a>
+        <a href="#" class="decide-option">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#2E75B6" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+          <div>
+            <strong>Video call support</strong>
+            <span>Talk face-to-face online</span>
+          </div>
+        </a>
+        <a href="#" class="decide-option">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#2E75B6" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+          <div>
+            <strong>Online assistance</strong>
+            <span>Chat with our team</span>
+          </div>
+        </a>
+      </div>
+      <!-- Trust Signals -->
+      <div class="trust-signals" id="trust-signals" style="display:none;">
+        <div class="trust-items" id="trust-items">
+          <!-- Rendered dynamically -->
+        </div>
+      </div>
+    </section>
+
+    <!-- ZONE 6: Hospital Network -->
+    <section class="hospital-section" id="zone-hospital">
+      <h3 class="section-title">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2E75B6" stroke-width="2"><path d="M3 21h18M9 8h1M9 12h1M9 16h1M14 8h1M14 12h1M14 16h1M5 21V5a2 2 0 012-2h10a2 2 0 012 2v16"/></svg>
+        <span id="hospital-title">TATA AIG Network Hospitals - 400001</span>
+      </h3>
+      <div class="hospital-scroll" id="hospital-cards">
+        <div class="hospital-card">
+          <div class="hospital-icon">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#2E75B6" stroke-width="1.5"><path d="M3 21h18M9 8h1M9 12h1M9 16h1M14 8h1M14 12h1M14 16h1M5 21V5a2 2 0 012-2h10a2 2 0 012 2v16"/></svg>
+          </div>
+          <strong>Kokilaben Dhirubhai Ambani Hospital</strong>
+          <span>Andheri (W), Mumbai</span>
+          <span class="hospital-type">Multi-specialty</span>
+        </div>
+        <div class="hospital-card">
+          <div class="hospital-icon">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#2E75B6" stroke-width="1.5"><path d="M3 21h18M9 8h1M9 12h1M9 16h1M14 8h1M14 12h1M14 16h1M5 21V5a2 2 0 012-2h10a2 2 0 012 2v16"/></svg>
+          </div>
+          <strong>Lilavati Hospital</strong>
+          <span>Bandra (W), Mumbai</span>
+          <span class="hospital-type">Multi-specialty</span>
+        </div>
+        <div class="hospital-card">
+          <div class="hospital-icon">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#2E75B6" stroke-width="1.5"><path d="M3 21h18M9 8h1M9 12h1M9 16h1M14 8h1M14 12h1M14 16h1M5 21V5a2 2 0 012-2h10a2 2 0 012 2v16"/></svg>
+          </div>
+          <strong>Hinduja Hospital</strong>
+          <span>Mahim, Mumbai</span>
+          <span class="hospital-type">Multi-specialty</span>
+        </div>
+        <div class="hospital-card">
+          <div class="hospital-icon">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#2E75B6" stroke-width="1.5"><path d="M3 21h18M9 8h1M9 12h1M9 16h1M14 8h1M14 12h1M14 16h1M5 21V5a2 2 0 012-2h10a2 2 0 012 2v16"/></svg>
+          </div>
+          <strong>Nanavati Hospital</strong>
+          <span>Vile Parle (W), Mumbai</span>
+          <span class="hospital-type">Multi-specialty</span>
+        </div>
+      </div>
+      <a href="#" class="view-all-hospitals" id="view-all-hospitals">View all 180+ hospitals</a>
+    </section>
+
+  </main>
+
+  <!-- ZONE 7: Sticky Footer Bar -->
+  <footer class="sticky-footer" id="zone-footer">
+    <div class="footer-inner">
+      <div class="footer-top">
+        <a href="#" class="extra-discounts" id="extra-discounts">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+          <span id="extra-discounts-text">To view Extra discounts - Check now</span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+        </a>
+      </div>
+      <div class="footer-bottom">
+        <div class="footer-price">
+          <a href="#" class="premium-breakup" id="premium-breakup">View premium breakup</a>
+          <div class="footer-total">
+            <span class="footer-amount" id="footer-amount">&#8377;6,580</span>
+            <span class="footer-gst">incl. 0% GST</span>
+          </div>
+        </div>
+        <button class="cta-primary" id="primary-cta">
+          <span id="cta-text">Proceed to optional covers</span>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </button>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/scenarios.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
