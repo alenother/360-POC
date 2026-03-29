@@ -1,5 +1,5 @@
 /* ============================================
-   TATA AIG Quote Page — Application Logic
+   XYZ Insurance Quote Page — Application Logic
    Personalisation Engine + UI Rendering
    ============================================ */
 
@@ -115,7 +115,7 @@
     hideElement('trust-signals');
 
     // Zone 6
-    $('#hospital-title').textContent = 'TATA AIG Network Hospitals - 400001';
+    $('#hospital-title').textContent = 'XYZ Insurance Network Hospitals - 400001';
     $('#view-all-hospitals').textContent = 'View all 180+ hospitals';
 
     // Zone 7
@@ -219,7 +219,7 @@
     if (sc.hospitalTitle) {
       $('#hospital-title').textContent = sc.hospitalTitle;
     } else {
-      $('#hospital-title').textContent = 'TATA AIG Network Hospitals - 400001';
+      $('#hospital-title').textContent = 'XYZ Insurance Network Hospitals - 400001';
     }
     const count = sc.hospitalCount || '180+';
     const city = sc.hospitalTitle ? sc.hospitalTitle.split(' - ')[1] : 'your area';

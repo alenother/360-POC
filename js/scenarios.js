@@ -7,7 +7,7 @@
 const PLANS = {
   select: {
     id: 'select',
-    name: 'MediCare Select',
+    name: 'HealthShield Select',
     type: 'Base / Customisable',
     defaultTagline: 'Customisable plan',
     basePrice: 6580,
@@ -27,7 +27,7 @@ const PLANS = {
   },
   premier: {
     id: 'premier',
-    name: 'MediCare Premier',
+    name: 'HealthShield Premier',
     type: 'Comprehensive / Premium',
     defaultTagline: 'Comprehensive plan + Additional Riders',
     basePrice: 12450,
@@ -47,7 +47,7 @@ const PLANS = {
   },
   plus: {
     id: 'plus',
-    name: 'MediCare Plus',
+    name: 'HealthShield Plus',
     type: 'Super Top-Up',
     defaultTagline: 'Extends your existing cover',
     basePrice: 3200,
@@ -67,7 +67,7 @@ const PLANS = {
   },
   eldercare: {
     id: 'eldercare',
-    name: 'ElderCare',
+    name: 'SeniorShield',
     type: 'Senior-specific',
     defaultTagline: 'Built for 61+, dignity-focused',
     basePrice: 18900,
@@ -87,7 +87,7 @@ const PLANS = {
   },
   criti: {
     id: 'criti',
-    name: 'Criti Medicare',
+    name: 'CritiShield',
     type: 'Critical Illness',
     defaultTagline: 'Lump-sum on diagnosis',
     basePrice: 4500,
@@ -284,7 +284,7 @@ const SCENARIOS = {
     recommendedBadgePlan: 'plus',
     planCardBadges: { plus: 'Bridges CGHS Gap' },
     scenarioBanner: {
-      headline: 'CGHS for the basics. MediCare Plus for everything else.',
+      headline: 'CGHS for the basics. HealthShield Plus for everything else.',
       body: 'Private hospitals, zero waiting, continuity after retirement.',
       bgColor: 'blue'
     },
@@ -507,7 +507,7 @@ const SCENARIOS = {
     planCardBadges: { criti: 'Critical + Hospital' },
     scenarioBanner: {
       headline: 'Lump-sum at diagnosis + hospitalisation cover.',
-      body: 'Criti Medicare pays when diagnosed. MediCare Select covers the hospital stay. Together, they cover everything.',
+      body: 'CritiShield pays when diagnosed. HealthShield Select covers the hospital stay. Together, they cover everything.',
       bgColor: 'red'
     },
     tiaGreeting: 'Two plans that work together for cardiac conditions.',
@@ -779,7 +779,7 @@ const SCENARIOS = {
     planCardBadges: { premier: 'Recommended For You' },
     scenarioBanner: {
       headline: 'We\'ve done the research — here\'s your match.',
-      body: 'Based on what you\'ve been comparing, MediCare Premier is the best fit. One decision. Done.',
+      body: 'Based on what you\'ve been comparing, HealthShield Premier is the best fit. One decision. Done.',
       bgColor: 'blue'
     },
     tiaGreeting: 'We\'ve narrowed it down for you.',
@@ -958,7 +958,7 @@ const SCENARIOS = {
     helpButtonText: 'Talk to your advisor',
     sumInsured: '10',
     policyTenure: '1',
-    hospitalTitle: 'TATA AIG Network Hospitals - Jaipur',
+    hospitalTitle: 'XYZ Insurance Network Hospitals - Jaipur',
     hospitalCount: '120+',
     planTaglines: { select: 'Zone C pricing — local rates', plus: 'Extend your cover affordably' }
   },
@@ -987,7 +987,7 @@ const SCENARIOS = {
     helpButtonText: 'Talk to your advisor',
     sumInsured: '50',
     policyTenure: '1',
-    hospitalTitle: 'TATA AIG Network Hospitals - Mumbai',
+    hospitalTitle: 'XYZ Insurance Network Hospitals - Mumbai',
     hospitalCount: '180+',
     planTaglines: { premier: 'Metro hospitals. Zero room rent cap.' }
   }
