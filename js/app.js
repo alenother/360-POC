@@ -9,6 +9,9 @@
   let currentScenario = null;
   let selectedPlanId = null;
   let isDefaultView = false;
+  let assistantMode = 'tia';    // 'tia', 'advisor-priya', 'advisor-rahul'
+  let nameMode = 'no-name';     // 'no-name', 'name'
+  const customerName = 'Amit';  // Simulated captured name
 
   // ── DOM References ──
   const $ = (sel) => document.querySelector(sel);
@@ -67,6 +70,22 @@
         updateCostConverter(e.target.dataset.period);
       }
     });
+
+    // Assistant mode selector
+    $('#assistant-mode').addEventListener('change', (e) => {
+      assistantMode = e.target.value;
+      updateAssistantAvatar();
+      reapplyGreeting();
+    });
+
+    // Name mode selector
+    $('#name-mode').addEventListener('change', (e) => {
+      nameMode = e.target.value;
+      reapplyGreeting();
+    });
+
+    // Initial avatar setup
+    updateAssistantAvatar();
   }
 
   // Run init immediately if DOM is ready, otherwise wait
@@ -79,7 +98,7 @@
   // ── Apply Default (non-personalised) View ──
   function applyDefault() {
     // Header
-    $('#tia-text').textContent = 'Your personalised quote is ready!';
+    $('#tia-text').textContent = personaliseGreeting('Your personalised quote is ready!');
     $('#help-btn-text').textContent = 'Need Help?';
 
     // Hide all banners
@@ -143,7 +162,7 @@
     }
 
     // Zone 1: TIA greeting + Help button
-    $('#tia-text').textContent = sc.tiaGreeting;
+    $('#tia-text').textContent = personaliseGreeting(sc.tiaGreeting);
     $('#help-btn-text').textContent = sc.helpButtonText;
 
     // Scenario banner
@@ -359,10 +378,12 @@
       container.appendChild(card);
     });
 
-    // Plan selection event handlers
-    $$('.plan-select').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const planId = btn.dataset.plan;
+    // Plan selection — whole card is clickable
+    $$('.plan-card').forEach(card => {
+      card.addEventListener('click', (e) => {
+        // Don't select if clicking a link (View benefits, etc.)
+        if (e.target.closest('a')) return;
+        const planId = card.dataset.planId;
         selectPlan(planId);
       });
     });
@@ -467,7 +488,7 @@
   function renderFooter(sc) {
     // Extra discounts text
     if (sc.scenarioId === 4) {
-      $('#extra-discounts-text').textContent = '50% NCB per claim-free year — see how your bonus grows';
+      $('#extra-discounts-text').textContent = '50% Cumulative Bonus per claim-free year — see how it grows';
     } else if (sc.scenarioId === 5) {
       $('#extra-discounts-text').textContent = '7.5% Professional Discount available';
     } else if (sc.discountBadge) {
@@ -595,5 +616,48 @@
       'maternity-timeline', 'lapse-callout', 'diy-checker',
       'callback-scheduler', 'referral-banner', 'resumption-banner'
     ].forEach(hideElement);
+  }
+
+  // ── Assistant Avatar ──
+  function updateAssistantAvatar() {
+    const avatarEl = $('#avatar-visual');
+    const labelEl = $('#tia-label');
+
+    if (assistantMode === 'tia') {
+      // AI Bot — sparkle icon
+      avatarEl.className = 'avatar-circle avatar-ai';
+      avatarEl.innerHTML = '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#0066CC" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L14.5 9.5 22 12 14.5 14.5 12 22 9.5 14.5 2 12 9.5 9.5z"/></svg>';
+      labelEl.className = 'tia-label';
+      labelEl.textContent = 'TIA';
+    } else {
+      // Human advisor
+      const isP = assistantMode === 'advisor-priya';
+      const name = isP ? 'Priya' : 'Rahul';
+      const initials = isP ? 'PS' : 'RK';
+      avatarEl.className = 'avatar-circle avatar-human';
+      avatarEl.innerHTML = initials;
+      labelEl.className = 'tia-label advisor-name';
+      labelEl.textContent = name + ', your advisor';
+    }
+  }
+
+  // ── Greeting with name prefix ──
+  function personaliseGreeting(greeting) {
+    if (nameMode === 'name') {
+      // Prefix with "Hi Name, " — handle existing "Hi " gracefully
+      if (greeting.toLowerCase().startsWith('hi ')) return greeting;
+      // Lower-case first letter of greeting when prefixing
+      const lower = greeting.charAt(0).toLowerCase() + greeting.slice(1);
+      return 'Hi ' + customerName + ', ' + lower;
+    }
+    return greeting;
+  }
+
+  function reapplyGreeting() {
+    if (isDefaultView) {
+      $('#tia-text').textContent = personaliseGreeting('Your personalised quote is ready!');
+    } else if (currentScenario) {
+      $('#tia-text').textContent = personaliseGreeting(currentScenario.tiaGreeting);
+    }
   }
 })();

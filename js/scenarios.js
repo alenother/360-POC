@@ -194,25 +194,25 @@ const SCENARIOS = {
 
   4: {
     scenarioId: 4,
-    scenarioName: 'No-claim bonus maximiser',
+    scenarioName: 'Cumulative bonus maximiser',
     category: 'Price & Value',
-    aiSignal: 'Asks about NCB, renewal discount, reads cumulative bonus',
+    aiSignal: 'Asks about cumulative bonus, renewal discount, reads bonus growth',
     recommendedPlans: ['select', 'premier'],
     preSelectedPlan: 'select',
     recommendedBadgePlan: 'select',
-    planCardBadges: { select: 'Best NCB Growth' },
+    planCardBadges: { select: 'Best Bonus Growth' },
     scenarioBanner: {
       headline: 'Your cover can double — without paying more.',
-      body: '50% NCB per claim-free year. In 5 years, your ₹10L becomes ₹20L.',
+      body: '50% Cumulative Bonus per claim-free year. In 5 years, your ₹10L becomes ₹20L.',
       bgColor: 'green'
     },
-    tiaGreeting: 'Let\'s show you how your NCB grows.',
-    primaryCTA: 'Lock in your NCB growth',
+    tiaGreeting: 'Let\'s show you how your Cumulative Bonus grows.',
+    primaryCTA: 'Lock in your bonus growth',
     priceDisplay: 'annual',
     discountBadge: null,
     featurePriority: ['Restore Infinity Plus (unlimited SI resets)', 'Annual health check-up', 'Consumables cover'],
     newElements: ['ncbCalculator'],
-    trustSignals: ['50% NCB per claim-free year', 'Maximum NCB: 100% of sum insured'],
+    trustSignals: ['50% Cumulative Bonus per claim-free year', 'Maximum bonus: 100% of sum insured'],
     helpButtonText: 'Talk to your advisor',
     sumInsured: '10',
     policyTenure: '1',
@@ -340,7 +340,7 @@ const SCENARIOS = {
     planCardBadges: { select: 'Family Friendly' },
     scenarioBanner: {
       headline: 'One premium. Everyone protected.',
-      body: 'Child hospitalised March. Parent hospitalised August. Both fully covered with Restore Infinity Plus.',
+      body: 'Two hospital visits in one year? Your entire family stays covered — every time, every member — with Restore Infinity Plus.',
       bgColor: 'blue'
     },
     tiaGreeting: 'Here\'s the best plan for your whole family.',
@@ -365,14 +365,14 @@ const SCENARIOS = {
     recommendedPlans: ['premier', 'select'],
     preSelectedPlan: 'premier',
     recommendedBadgePlan: 'premier',
-    planCardBadges: { premier: 'Maternity Included' },
+    planCardBadges: { premier: 'Couples Cover' },
     scenarioBanner: {
-      headline: 'Planning a family starts with planning for one.',
-      body: 'The maternity waiting period clock starts the day you buy. Don\'t wait.',
+      headline: 'A new chapter deserves the right protection.',
+      body: 'Cover both of you under one plan. Because taking care of each other is what partnership is about.',
       bgColor: 'purple'
     },
-    tiaGreeting: 'Congratulations! Let\'s plan your family\'s health cover.',
-    primaryCTA: 'Start maternity cover today',
+    tiaGreeting: 'Congratulations! Let\'s protect what matters most.',
+    primaryCTA: 'Protect your partner today',
     priceDisplay: 'annual',
     discountBadge: null,
     featurePriority: ['Maternity + ₹20K girl child bonus', 'Unlimited specialist teleconsult', 'Global Cover (worldwide hospitalisation)'],
@@ -382,7 +382,7 @@ const SCENARIOS = {
     sumInsured: '15',
     policyTenure: '1',
     policyFor: 'Self + Spouse - 400001',
-    planTaglines: { premier: 'Maternity cover with ₹20K girl child bonus', select: 'Add Maternity Care rider' }
+    planTaglines: { premier: 'Complete couples cover + future-ready benefits', select: 'Flexible cover for two' }
   },
 
   11: {
@@ -942,14 +942,14 @@ const SCENARIOS = {
     recommendedPlans: ['plus', 'select'],
     preSelectedPlan: 'select',
     recommendedBadgePlan: 'select',
-    planCardBadges: { select: 'Local Coverage' },
+    planCardBadges: { select: 'Your City Covered' },
     scenarioBanner: {
-      headline: 'Health cover that works in your city.',
-      body: 'Network hospitals near you. AYUSH facilities. Teleconsult for specialist access.',
+      headline: 'Premium health cover, right where you are.',
+      body: 'Strong hospital network in your city. AYUSH facilities included. Specialist teleconsult anytime.',
       bgColor: 'blue'
     },
-    tiaGreeting: 'Here are plans with hospitals near you.',
-    primaryCTA: 'See hospitals near you',
+    tiaGreeting: 'Great coverage is available in your city.',
+    primaryCTA: 'Explore your city\'s network',
     priceDisplay: 'annual',
     discountBadge: null,
     featurePriority: ['Restore Infinity Plus (unlimited SI resets)', 'Annual health check-up', 'Consumables cover'],
@@ -960,7 +960,7 @@ const SCENARIOS = {
     policyTenure: '1',
     hospitalTitle: 'XYZ Insurance Network Hospitals - Jaipur',
     hospitalCount: '120+',
-    planTaglines: { select: 'Zone C pricing — local rates', plus: 'Extend your cover affordably' }
+    planTaglines: { select: 'Smart pricing for your city', plus: 'Extend your cover affordably' }
   },
 
   32: {
@@ -971,24 +971,24 @@ const SCENARIOS = {
     recommendedPlans: ['premier'],
     preSelectedPlan: 'premier',
     recommendedBadgePlan: 'premier',
-    planCardBadges: { premier: 'Metro-Grade Cover' },
+    planCardBadges: { premier: 'Mumbai Premium Cover' },
     scenarioBanner: {
-      headline: 'Metro hospitals. Metro cover.',
-      body: 'No room rent cap. Single private room. Air ambulance. Global cover — because metro living demands metro protection.',
+      headline: 'Mumbai hospitals. Mumbai-grade cover.',
+      body: 'No room rent cap. Single private room. Air ambulance. Global cover — built for the demands of living in Mumbai.',
       bgColor: 'purple'
     },
-    tiaGreeting: 'Premium protection for metro living.',
-    primaryCTA: 'Get metro-grade cover',
+    tiaGreeting: 'Premium protection for Mumbai.',
+    primaryCTA: 'Get Mumbai-grade cover',
     priceDisplay: 'annual',
     discountBadge: null,
     featurePriority: ['Global Cover (worldwide hospitalisation)', 'Air Ambulance up to ₹5L', 'Unlimited specialist teleconsult', 'Restore Benefit'],
     newElements: [],
-    trustSignals: ['No room rent cap', 'Single private room', 'Zone A pricing — metro rates'],
+    trustSignals: ['No room rent cap', 'Single private room', '180+ network hospitals in Mumbai'],
     helpButtonText: 'Talk to your advisor',
     sumInsured: '50',
     policyTenure: '1',
     hospitalTitle: 'XYZ Insurance Network Hospitals - Mumbai',
     hospitalCount: '180+',
-    planTaglines: { premier: 'Metro hospitals. Zero room rent cap.' }
+    planTaglines: { premier: 'Mumbai\'s top hospitals. Zero room rent cap.' }
   }
 };

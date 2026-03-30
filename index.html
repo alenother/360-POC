@@ -6,7 +6,7 @@
   <title>XYZ Insurance - Personalised Quote</title>
   <link rel="stylesheet" href="css/styles.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@200;300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
 
@@ -49,6 +49,16 @@
         <option value="32">32 - Metro high-income</option>
       </select>
       <button id="toggle-default" class="demo-toggle">Show Default</button>
+      <span class="demo-divider">|</span>
+      <select id="assistant-mode" class="demo-select-sm">
+        <option value="tia">TIA (AI Bot)</option>
+        <option value="advisor-priya">Advisor: Priya</option>
+        <option value="advisor-rahul">Advisor: Rahul</option>
+      </select>
+      <select id="name-mode" class="demo-select-sm">
+        <option value="no-name">No Name</option>
+        <option value="name">Hi Amit</option>
+      </select>
     </div>
   </div>
 
@@ -60,25 +70,22 @@
           <span class="logo-tata">XYZ</span>
           <span class="logo-aig">Insurance</span>
         </div>
-        <span class="logo-subtitle">Health Insurance</span>
       </div>
       <button class="help-btn" id="help-btn">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6A19.79 19.79 0 012.12 4.18 2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.362 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.338 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
         <span id="help-btn-text">Need Help?</span>
       </button>
     </div>
-    <!-- Zia Assistant Greeting -->
+    <!-- TIA / Advisor Greeting -->
     <div class="tia-greeting" id="tia-greeting">
-      <div class="tia-avatar">
-        <svg width="32" height="32" viewBox="0 0 40 40" fill="none">
-          <circle cx="20" cy="20" r="20" fill="#E8F4FD"/>
-          <circle cx="20" cy="16" r="7" fill="#2E75B6"/>
-          <path d="M8 34c0-6.627 5.373-12 12-12s12 5.373 12 12" fill="#2E75B6"/>
-          <circle cx="17" cy="15" r="1.5" fill="white"/>
-          <circle cx="23" cy="15" r="1.5" fill="white"/>
-          <path d="M17 19.5c1.5 1.5 4.5 1.5 6 0" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
-        </svg>
-        <span class="tia-label">Zia</span>
+      <div class="tia-avatar" id="tia-avatar">
+        <!-- TIA AI Bot avatar (default) -->
+        <div class="avatar-circle avatar-ai" id="avatar-visual">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#0066CC" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 2L14.5 9.5 22 12 14.5 14.5 12 22 9.5 14.5 2 12 9.5 9.5z"/>
+          </svg>
+        </div>
+        <span class="tia-label" id="tia-label">TIA</span>
       </div>
       <p class="tia-text" id="tia-text">Your personalised quote is ready!</p>
     </div>
@@ -87,8 +94,13 @@
   <!-- Scenario Banner (Zone 8 - New Element, placed below Zia) -->
   <div class="scenario-banner" id="scenario-banner" style="display:none;">
     <div class="scenario-banner-inner">
-      <h2 class="banner-headline" id="banner-headline"></h2>
-      <p class="banner-body" id="banner-body"></p>
+      <div class="banner-icon" id="banner-icon">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2L14.5 9.5 22 12 14.5 14.5 12 22 9.5 14.5 2 12 9.5 9.5z"/></svg>
+      </div>
+      <div class="banner-content">
+        <h2 class="banner-headline" id="banner-headline"></h2>
+        <p class="banner-body" id="banner-body"></p>
+      </div>
     </div>
   </div>
 
@@ -116,8 +128,8 @@
     <!-- ZONE 2: Policy Configuration Bar -->
     <section class="policy-config" id="zone-policy-config">
       <div class="config-row">
-        <div class="config-item">
-          <label class="config-label">Policy For</label>
+        <div class="config-item config-policy-for">
+          <label class="config-label">Policy for</label>
           <div class="config-value" id="policy-for">
             <span id="policy-for-text">Self - 400001</span>
             <button class="edit-btn" aria-label="Edit policy members">
@@ -125,8 +137,12 @@
             </button>
           </div>
         </div>
-        <div class="config-item">
-          <label class="config-label">Sum Insured</label>
+        <div class="config-divider"></div>
+        <div class="config-item config-si">
+          <div class="config-si-top">
+            <label class="config-label">Sum Insured</label>
+            <a href="#" class="find-value-link" id="find-value-link">Find Right Value ›</a>
+          </div>
           <div class="si-selector" id="si-selector">
             <button class="si-option" data-si="5">5L</button>
             <button class="si-option" data-si="10">10L</button>
@@ -135,9 +151,9 @@
             <button class="si-option" data-si="50">50L</button>
             <button class="si-option" data-si="100">1Cr</button>
           </div>
-          <a href="#" class="find-value-link" id="find-value-link">Find Right Value</a>
         </div>
-        <div class="config-item">
+        <div class="config-divider"></div>
+        <div class="config-item config-tenure">
           <label class="config-label">Policy Tenure</label>
           <div class="tenure-toggle" id="tenure-toggle">
             <button class="tenure-option active" data-tenure="1">1 yr</button>
@@ -201,7 +217,7 @@
 
     <!-- Zone 8: NCB Growth Calculator -->
     <div class="ncb-calculator" id="ncb-calculator" style="display:none;">
-      <h3 class="z8-title">Watch Your Cover Grow</h3>
+      <h3 class="z8-title">Watch Your Cover Grow with Cumulative Bonus</h3>
       <div class="ncb-visual">
         <div class="ncb-timeline">
           <div class="ncb-year" data-year="1">
@@ -230,7 +246,7 @@
             <span class="ncb-value">&#8377;20L</span>
           </div>
         </div>
-        <p class="ncb-note">50% No Claim Bonus every year. Your cover can <strong>double in five years</strong>.</p>
+        <p class="ncb-note">50% Cumulative Bonus every claim-free year. Your cover can <strong>double in five years</strong>.</p>
       </div>
     </div>
 
@@ -340,7 +356,6 @@
     <!-- ZONE 4: Detailed Comparison Link -->
     <section class="comparison-link-section" id="zone-comparison">
       <a href="#" class="comparison-link" id="comparison-link">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
         View Detailed Comparison
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
       </a>
@@ -355,23 +370,23 @@
       <h3 class="section-title" id="decide-title">Unable to decide?</h3>
       <div class="decide-options" id="decide-options">
         <a href="#" class="decide-option">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#2E75B6" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
           <div>
-            <strong>In-person visit</strong>
-            <span>Meet an advisor near you</span>
+            <strong>In-person visit ›</strong>
+            <span>Expert help at your doorstep</span>
           </div>
         </a>
         <a href="#" class="decide-option">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#2E75B6" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
           <div>
-            <strong>Video call support</strong>
+            <strong>Video call support ›</strong>
             <span>Talk face-to-face online</span>
           </div>
         </a>
         <a href="#" class="decide-option">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#2E75B6" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
           <div>
-            <strong>Online assistance</strong>
+            <strong>Online buying assist ›</strong>
             <span>Chat with our team</span>
           </div>
         </a>
@@ -387,13 +402,13 @@
     <!-- ZONE 6: Hospital Network -->
     <section class="hospital-section" id="zone-hospital">
       <h3 class="section-title">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2E75B6" stroke-width="2"><path d="M3 21h18M9 8h1M9 12h1M9 16h1M14 8h1M14 12h1M14 16h1M5 21V5a2 2 0 012-2h10a2 2 0 012 2v16"/></svg>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M9 8h1M9 12h1M9 16h1M14 8h1M14 12h1M14 16h1M5 21V5a2 2 0 012-2h10a2 2 0 012 2v16"/></svg>
         <span id="hospital-title">XYZ Insurance Network Hospitals - 400001</span>
       </h3>
       <div class="hospital-scroll" id="hospital-cards">
         <div class="hospital-card">
           <div class="hospital-icon">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#2E75B6" stroke-width="1.5"><path d="M3 21h18M9 8h1M9 12h1M9 16h1M14 8h1M14 12h1M14 16h1M5 21V5a2 2 0 012-2h10a2 2 0 012 2v16"/></svg>
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 21h18M9 8h1M9 12h1M9 16h1M14 8h1M14 12h1M14 16h1M5 21V5a2 2 0 012-2h10a2 2 0 012 2v16"/></svg>
           </div>
           <strong>Kokilaben Dhirubhai Ambani Hospital</strong>
           <span>Andheri (W), Mumbai</span>
@@ -401,7 +416,7 @@
         </div>
         <div class="hospital-card">
           <div class="hospital-icon">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#2E75B6" stroke-width="1.5"><path d="M3 21h18M9 8h1M9 12h1M9 16h1M14 8h1M14 12h1M14 16h1M5 21V5a2 2 0 012-2h10a2 2 0 012 2v16"/></svg>
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 21h18M9 8h1M9 12h1M9 16h1M14 8h1M14 12h1M14 16h1M5 21V5a2 2 0 012-2h10a2 2 0 012 2v16"/></svg>
           </div>
           <strong>Lilavati Hospital</strong>
           <span>Bandra (W), Mumbai</span>
@@ -409,7 +424,7 @@
         </div>
         <div class="hospital-card">
           <div class="hospital-icon">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#2E75B6" stroke-width="1.5"><path d="M3 21h18M9 8h1M9 12h1M9 16h1M14 8h1M14 12h1M14 16h1M5 21V5a2 2 0 012-2h10a2 2 0 012 2v16"/></svg>
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 21h18M9 8h1M9 12h1M9 16h1M14 8h1M14 12h1M14 16h1M5 21V5a2 2 0 012-2h10a2 2 0 012 2v16"/></svg>
           </div>
           <strong>Hinduja Hospital</strong>
           <span>Mahim, Mumbai</span>
@@ -417,14 +432,14 @@
         </div>
         <div class="hospital-card">
           <div class="hospital-icon">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#2E75B6" stroke-width="1.5"><path d="M3 21h18M9 8h1M9 12h1M9 16h1M14 8h1M14 12h1M14 16h1M5 21V5a2 2 0 012-2h10a2 2 0 012 2v16"/></svg>
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 21h18M9 8h1M9 12h1M9 16h1M14 8h1M14 12h1M14 16h1M5 21V5a2 2 0 012-2h10a2 2 0 012 2v16"/></svg>
           </div>
           <strong>Nanavati Hospital</strong>
           <span>Vile Parle (W), Mumbai</span>
           <span class="hospital-type">Multi-specialty</span>
         </div>
       </div>
-      <a href="#" class="view-all-hospitals" id="view-all-hospitals">View all 180+ hospitals</a>
+      <a href="#" class="view-all-hospitals" id="view-all-hospitals">View all 180+ hospitals near your area</a>
     </section>
 
   </main>
@@ -441,7 +456,7 @@
       </div>
       <div class="footer-bottom">
         <div class="footer-price">
-          <a href="#" class="premium-breakup" id="premium-breakup">View premium breakup</a>
+          <a href="#" class="premium-breakup" id="premium-breakup">View premium breakup ›</a>
           <div class="footer-total">
             <span class="footer-amount" id="footer-amount">&#8377;6,580</span>
             <span class="footer-gst">incl. 0% GST</span>
