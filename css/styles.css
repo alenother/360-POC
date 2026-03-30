@@ -223,7 +223,7 @@ button { cursor: pointer; border: none; background: none; font-family: var(--fon
   border-top: 1px solid var(--border);
   border-bottom: 1px solid var(--border);
   border-left: 3px solid var(--blue);
-  padding: 16px 20px;
+  padding: 16px 20px 16px 17px;
 }
 
 .scenario-banner.bg-green { border-left-color: var(--green); }
@@ -295,18 +295,16 @@ button { cursor: pointer; border: none; background: none; font-family: var(--fon
 
 .config-row {
   display: flex;
-  flex-direction: row;
-  gap: 10px;
+  flex-direction: column;
+  gap: 14px;
   max-width: 480px;
   margin: 0 auto;
-  flex-wrap: wrap;
-  align-items: center;
 }
 
 .config-item {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 6px;
 }
 
 .config-label {
@@ -339,7 +337,7 @@ button { cursor: pointer; border: none; background: none; font-family: var(--fon
 }
 
 .si-option {
-  padding: 6px 14px;
+  padding: 6px 12px;
   border-radius: var(--radius-pill);
   font-size: 12px;
   font-weight: 600;
@@ -401,10 +399,14 @@ button { cursor: pointer; border: none; background: none; font-family: var(--fon
 
 .plan-cards-container {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  grid-template-columns: repeat(2, 1fr);
   gap: 10px;
   max-width: 480px;
   margin: 0 auto;
+}
+
+.plan-cards-container.three-plans {
+  grid-template-columns: repeat(3, 1fr);
 }
 
 .plan-card {
@@ -415,6 +417,9 @@ button { cursor: pointer; border: none; background: none; font-family: var(--fon
   transition: all 0.3s ease;
   text-align: center;
   padding: 14px 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .plan-card.recommended {
@@ -427,13 +432,14 @@ button { cursor: pointer; border: none; background: none; font-family: var(--fon
   border-color: var(--blue);
 }
 
-/* Badges — small, single line */
+/* Badges — small, wrapping */
 .plan-badge-row {
   display: flex;
-  gap: 4px;
+  gap: 3px;
   justify-content: center;
   flex-wrap: wrap;
   margin-bottom: 8px;
+  width: 100%;
 }
 
 .plan-badge {
@@ -453,7 +459,7 @@ button { cursor: pointer; border: none; background: none; font-family: var(--fon
 .plan-badge.custom-badge { background: var(--blue-glow); color: var(--blue-bright); }
 
 /* Plan header — compact */
-.plan-header { padding: 0; }
+.plan-header { padding: 0; width: 100%; }
 
 .plan-name {
   font-size: 14px;
@@ -482,6 +488,7 @@ button { cursor: pointer; border: none; background: none; font-family: var(--fon
   flex-direction: column;
   align-items: center;
   gap: 2px;
+  width: 100%;
 }
 
 .plan-original-price {
@@ -557,6 +564,7 @@ button { cursor: pointer; border: none; background: none; font-family: var(--fon
   color: var(--blue);
   text-align: center;
   transition: color 0.2s;
+  width: 100%;
 }
 .view-benefits:hover { color: var(--blue-bright); }
 
@@ -568,6 +576,7 @@ button { cursor: pointer; border: none; background: none; font-family: var(--fon
   padding: 8px 4px 0;
   gap: 6px;
   cursor: pointer;
+  margin-top: auto;
 }
 
 .plan-radio {
@@ -611,7 +620,7 @@ button { cursor: pointer; border: none; background: none; font-family: var(--fon
 
 /* ── Cost Converter ── */
 .cost-converter {
-  max-width: 480px;
+  max-width: 440px;
   margin: 0 auto 16px;
   padding: 20px;
   background: var(--bg-card);
@@ -619,6 +628,19 @@ button { cursor: pointer; border: none; background: none; font-family: var(--fon
   border: 1px solid var(--border);
   margin-left: 20px;
   margin-right: 20px;
+}
+
+@media (min-width: 520px) {
+  .cost-converter,
+  .gap-visualiser,
+  .ncb-calculator,
+  .maternity-timeline,
+  .lapse-callout,
+  .diy-checker,
+  .callback-scheduler {
+    margin-left: auto;
+    margin-right: auto;
+  }
 }
 
 .converter-display { text-align: center; }
@@ -944,9 +966,9 @@ button { cursor: pointer; border: none; background: none; font-family: var(--fon
   transition: all 0.2s;
 }
 .decide-option:hover { border-color: var(--border-active); }
-.decide-option svg { stroke: var(--blue); }
+.decide-option svg { stroke: var(--blue); flex-shrink: 0; }
 .decide-option strong { display: block; font-size: 13px; color: var(--text-primary); }
-.decide-option span { font-size: 12px; color: var(--text-tertiary); }
+.decide-option span { display: block; font-size: 12px; color: var(--text-tertiary); }
 
 .callback-cta {
   border-color: var(--border-active) !important;
@@ -968,10 +990,10 @@ button { cursor: pointer; border: none; background: none; font-family: var(--fon
   gap: 8px;
   padding: 8px 14px;
   background: var(--bg-card);
-  border-radius: var(--radius-pill);
+  border-radius: var(--radius);
   border: 1px solid var(--border);
-  flex: 1;
-  min-width: 0;
+  flex: 1 1 calc(50% - 4px);
+  min-width: 140px;
 }
 
 .trust-icon {
@@ -1077,7 +1099,7 @@ button { cursor: pointer; border: none; background: none; font-family: var(--fon
 .footer-bottom {
   display: flex; align-items: center;
   justify-content: space-between;
-  padding: 4px 20px 12px;
+  padding: 6px 20px 14px;
   gap: 12px;
 }
 

@@ -236,6 +236,7 @@
   function renderPlanCards(planIds, config) {
     const container = $('#plan-cards-container');
     container.innerHTML = '';
+    container.classList.toggle('three-plans', planIds.length >= 3);
 
     selectedPlanId = config.preSelectedPlan;
 
