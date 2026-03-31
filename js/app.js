@@ -26,6 +26,11 @@
 
   // ── Initialise ──
   function init() {
+    // CRITICAL: Register help button handler FIRST (before anything that might throw)
+    if ($('#help-btn')) {
+      $('#help-btn').addEventListener('click', startVoiceCall);
+    }
+
     const urlParams = new URLSearchParams(window.location.search);
     const refHash = urlParams.get('ref');
 
@@ -37,32 +42,38 @@
     // Also support direct scenario ID via ?s= (numeric or code)
     const sParam = urlParams.get('s');
     const scenarioId = parseInt(sParam) || 20;
-    $('#scenario-selector').value = scenarioId;
+    if ($('#scenario-selector')) $('#scenario-selector').value = scenarioId;
     if (!refHash) {
       applyScenario(scenarioId);
     }
 
-    // Demo bar controls
-    $('#scenario-selector').addEventListener('change', (e) => {
-      isDefaultView = false;
-      $('#toggle-default').classList.remove('active');
-      $('#toggle-default').textContent = 'Show Default';
-      applyScenario(parseInt(e.target.value));
-    });
+    // Demo bar controls (safe — null-checked)
+    if ($('#scenario-selector')) {
+      $('#scenario-selector').addEventListener('change', (e) => {
+        isDefaultView = false;
+        if ($('#toggle-default')) {
+          $('#toggle-default').classList.remove('active');
+          $('#toggle-default').textContent = 'Show Default';
+        }
+        applyScenario(parseInt(e.target.value));
+      });
+    }
 
-    $('#toggle-default').addEventListener('click', () => {
-      isDefaultView = !isDefaultView;
-      const btn = $('#toggle-default');
-      if (isDefaultView) {
-        btn.classList.add('active');
-        btn.textContent = 'Show Personalised';
-        applyDefault();
-      } else {
-        btn.classList.remove('active');
-        btn.textContent = 'Show Default';
-        applyScenario(parseInt($('#scenario-selector').value));
-      }
-    });
+    if ($('#toggle-default')) {
+      $('#toggle-default').addEventListener('click', () => {
+        isDefaultView = !isDefaultView;
+        const btn = $('#toggle-default');
+        if (isDefaultView) {
+          btn.classList.add('active');
+          btn.textContent = 'Show Personalised';
+          applyDefault();
+        } else {
+          btn.classList.remove('active');
+          btn.textContent = 'Show Default';
+          applyScenario(parseInt($('#scenario-selector').value));
+        }
+      });
+    }
 
     // SI selector
     $$('.si-option').forEach(btn => {
@@ -90,20 +101,21 @@
     });
 
     // Assistant mode selector
-    $('#assistant-mode').addEventListener('change', (e) => {
-      assistantMode = e.target.value;
-      updateAssistantAvatar();
-      reapplyGreeting();
-    });
+    if ($('#assistant-mode')) {
+      $('#assistant-mode').addEventListener('change', (e) => {
+        assistantMode = e.target.value;
+        updateAssistantAvatar();
+        reapplyGreeting();
+      });
+    }
 
     // Name mode selector
-    $('#name-mode').addEventListener('change', (e) => {
-      nameMode = e.target.value;
-      reapplyGreeting();
-    });
-
-    // Need Help button — start voice call with TIA
-    $('#help-btn').addEventListener('click', startVoiceCall);
+    if ($('#name-mode')) {
+      $('#name-mode').addEventListener('change', (e) => {
+        nameMode = e.target.value;
+        reapplyGreeting();
+      });
+    }
 
     // Initial avatar setup
     updateAssistantAvatar();
