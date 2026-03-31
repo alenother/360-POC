@@ -17,8 +17,6 @@
   const API_BASE = 'http://localhost:8000';
 
   // ── Voice Call State ──
-  let _callFrame = null;
-  let _detectedScenarioId = null;
 
   // ── DOM References ──
   const $ = (sel) => document.querySelector(sel);
@@ -121,28 +119,15 @@
     updateAssistantAvatar();
   }
 
-  // ── Voice Call with TIA (via Daily.co — no backend needed) ──
+  // ── Voice Call with TIA ──
+  // Opens call.html in a new tab with the Daily room.
+  // When call ends, call.html redirects back here with ?s=<scenarioId>.
 
-  function _getRoomParams() {
+  function startVoiceCall() {
     const urlParams = new URLSearchParams(window.location.search);
-    return {
-      room: urlParams.get('room'),
-      token: urlParams.get('token'),
-    };
-  }
+    const room = urlParams.get('room');
+    const token = urlParams.get('token');
 
-  async function startVoiceCall() {
-    const helpBtn = $('#help-btn');
-    const helpText = $('#help-btn-text');
-
-    // Toggle: if call active, end it
-    if (_callFrame) {
-      endVoiceCall();
-      return;
-    }
-
-    // Check if room params are in the URL (provided by bot.py)
-    const { room, token } = _getRoomParams();
     if (!room || !token) {
       alert(
         'To talk to TIA, start the bot first:\n\n' +
@@ -154,119 +139,11 @@
       return;
     }
 
-    helpText.textContent = 'Connecting...';
-    helpBtn.disabled = true;
-
-    try {
-      // Create Daily call object (headless — audio only, no iframe needed)
-      _callFrame = window.DailyIframe.createCallObject({
-        audioSource: true,
-        videoSource: false,
-      });
-
-      // When we join, update button
-      _callFrame.on('joined-meeting', () => {
-        helpText.textContent = 'End Call';
-        helpBtn.disabled = false;
-        helpBtn.classList.add('call-active');
-        showCallBanner('TIA is listening... speak naturally.');
-      });
-
-      // When call ends (we left), apply personalisation
-      _callFrame.on('left-meeting', () => {
-        onCallEnded();
-      });
-
-      // If bot leaves, end our side too
-      _callFrame.on('participant-left', (evt) => {
-        if (evt.participant.local === false) {
-          endVoiceCall();
-        }
-      });
-
-      // Listen for app messages from the bot (scenario detection)
-      _callFrame.on('app-message', (evt) => {
-        console.log('App message from bot:', evt.data);
-        const data = evt.data;
-
-        if (data.type === 'scenario_detected') {
-          _detectedScenarioId = data.scenario_id;
-          showCallBanner(
-            'Scenario detected: ' + data.scenario_name +
-            ' (confidence: ' + (data.confidence * 100).toFixed(0) + '%)'
-          );
-          // Update customer name if provided
-          if (data.customer_name) {
-            customerName = data.customer_name;
-            nameMode = 'name';
-          }
-        }
-
-        if (data.type === 'quote_ready') {
-          _detectedScenarioId = data.scenario_id;
-          showCallBanner('Your personalised quote is ready!');
-        }
-      });
-
-      // Join the room
-      await _callFrame.join({
-        url: room,
-        token: token,
-        startAudioOff: false,
-        startVideoOff: true,
-      });
-
-    } catch (err) {
-      console.error('Failed to start call:', err);
-      helpText.textContent = 'Need Help?';
-      helpBtn.disabled = false;
-      alert('Could not connect to TIA. The room may have expired.\nRestart bot.py and open the new URL.');
-    }
-  }
-
-  function endVoiceCall() {
-    if (_callFrame) {
-      try { _callFrame.leave(); } catch (e) { /* ignore */ }
-      try { _callFrame.destroy(); } catch (e) { /* ignore */ }
-      _callFrame = null;
-    }
-  }
-
-  function onCallEnded() {
-    const helpBtn = $('#help-btn');
-    const helpText = $('#help-btn-text');
-    helpBtn.classList.remove('call-active');
-    helpBtn.disabled = false;
-
-    if (_callFrame) {
-      try { _callFrame.destroy(); } catch (e) { /* ignore */ }
-      _callFrame = null;
-    }
-
-    // Apply personalisation based on detected scenario
-    if (_detectedScenarioId) {
-      helpText.textContent = 'Call Again';
-      showCallBanner('Loading your personalised quote...');
-      setTimeout(() => {
-        applyScenario(_detectedScenarioId);
-        if ($('#scenario-selector')) {
-          $('#scenario-selector').value = _detectedScenarioId;
-        }
-        showCallBanner('Quote personalised based on your conversation with TIA.');
-      }, 500);
-    } else {
-      helpText.textContent = 'Need Help?';
-    }
-  }
-
-  function showCallBanner(message) {
-    const banner = $('#scenario-banner');
-    if (banner) {
-      banner.style.display = '';
-      banner.className = 'scenario-banner bg-blue';
-      $('#banner-headline').textContent = 'TIA Voice Call';
-      $('#banner-body').textContent = message;
-    }
+    // Open the call page in a new tab
+    const callUrl = new URL('call.html', window.location.href);
+    callUrl.searchParams.set('room', room);
+    callUrl.searchParams.set('token', token);
+    window.open(callUrl.toString(), '_blank');
   }
 
   // Run init immediately if DOM is ready, otherwise wait

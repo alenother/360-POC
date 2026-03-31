@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TIA Voice Call</title>
+  <script crossorigin src="https://unpkg.com/@daily-co/daily-js"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #0a0a1a;
+      color: #fff;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+    .call-container {
+      text-align: center;
+      max-width: 400px;
+      padding: 40px;
+    }
+    .avatar {
+      width: 100px; height: 100px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #0066CC, #00AAFF);
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 24px;
+      animation: pulse-blue 2s infinite;
+    }
+    @keyframes pulse-blue {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(0,102,204,0.5); }
+      50% { box-shadow: 0 0 0 20px rgba(0,102,204,0); }
+    }
+    .avatar svg { width: 48px; height: 48px; }
+    h1 { font-size: 24px; font-weight: 600; margin-bottom: 8px; }
+    .status { color: #888; font-size: 14px; margin-bottom: 32px; min-height: 20px; }
+    .scenario-info {
+      background: rgba(0,102,204,0.15);
+      border: 1px solid rgba(0,102,204,0.3);
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 24px;
+      display: none;
+      text-align: left;
+    }
+    .scenario-info .label { color: #00AAFF; font-size: 12px; font-weight: 600; text-transform: uppercase; }
+    .scenario-info .value { font-size: 16px; margin-top: 4px; }
+    .end-btn {
+      background: #DC2626;
+      color: #fff;
+      border: none;
+      padding: 16px 48px;
+      border-radius: 50px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .end-btn:hover { background: #B91C1C; transform: scale(1.05); }
+    .end-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    .timer { color: #666; font-size: 13px; margin-top: 16px; }
+  </style>
+</head>
+<body>
+  <div class="call-container">
+    <div class="avatar">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.5">
+        <path d="M12 2L14.5 9.5 22 12 14.5 14.5 12 22 9.5 14.5 2 12 9.5 9.5z"/>
+      </svg>
+    </div>
+    <h1>TIA</h1>
+    <p class="status" id="status">Connecting...</p>
+    <div class="scenario-info" id="scenario-info">
+      <div class="label">Scenario Detected</div>
+      <div class="value" id="scenario-name"></div>
+    </div>
+    <button class="end-btn" id="end-btn" disabled>End Call</button>
+    <div class="timer" id="timer"></div>
+  </div>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const roomUrl = params.get('room');
+    const token = params.get('token');
+    const statusEl = document.getElementById('status');
+    const endBtn = document.getElementById('end-btn');
+    const timerEl = document.getElementById('timer');
+    const scenarioEl = document.getElementById('scenario-info');
+    const scenarioName = document.getElementById('scenario-name');
+
+    let detectedScenarioId = null;
+    let callStart = null;
+    let timerInterval = null;
+
+    if (!roomUrl || !token) {
+      statusEl.textContent = 'Missing room or token. Start bot.py first.';
+    } else {
+      startCall();
+    }
+
+    async function startCall() {
+      try {
+        const callObject = DailyIframe.createCallObject({
+          audioSource: true,
+          videoSource: false,
+        });
+
+        callObject.on('joined-meeting', () => {
+          statusEl.textContent = 'Connected — speak naturally';
+          endBtn.disabled = false;
+          callStart = Date.now();
+          timerInterval = setInterval(updateTimer, 1000);
+        });
+
+        callObject.on('participant-left', (evt) => {
+          if (!evt.participant.local) {
+            statusEl.textContent = 'TIA has ended the call';
+            setTimeout(() => endCall(callObject), 1000);
+          }
+        });
+
+        callObject.on('left-meeting', () => {
+          endCall(callObject);
+        });
+
+        callObject.on('app-message', (evt) => {
+          console.log('Bot message:', evt.data);
+          const data = evt.data;
+          if (data.type === 'scenario_detected') {
+            detectedScenarioId = data.scenario_id;
+            scenarioEl.style.display = 'block';
+            scenarioName.textContent = data.scenario_name + ' (' + Math.round(data.confidence * 100) + '% confidence)';
+            statusEl.textContent = 'Scenario identified — wrapping up...';
+          }
+          if (data.type === 'quote_ready') {
+            detectedScenarioId = data.scenario_id;
+            statusEl.textContent = 'Your personalised quote is ready!';
+          }
+        });
+
+        callObject.on('error', (err) => {
+          console.error('Call error:', err);
+          statusEl.textContent = 'Connection error. Room may have expired.';
+        });
+
+        endBtn.addEventListener('click', () => {
+          callObject.leave();
+        });
+
+        statusEl.textContent = 'Joining room...';
+        await callObject.join({ url: roomUrl, token: token });
+
+      } catch (err) {
+        console.error('Failed to join:', err);
+        statusEl.textContent = 'Failed to connect: ' + err.message;
+      }
+    }
+
+    function endCall(callObject) {
+      if (timerInterval) clearInterval(timerInterval);
+      try { callObject.destroy(); } catch(e) {}
+
+      if (detectedScenarioId) {
+        statusEl.textContent = 'Redirecting to your personalised quote...';
+        setTimeout(() => {
+          // Redirect back to main page with scenario
+          const base = window.location.origin + window.location.pathname.replace('call.html', '');
+          window.location.href = base + '?s=' + detectedScenarioId;
+        }, 1500);
+      } else {
+        statusEl.textContent = 'Call ended. Returning to quote page...';
+        setTimeout(() => {
+          const base = window.location.origin + window.location.pathname.replace('call.html', '');
+          window.location.href = base;
+        }, 2000);
+      }
+    }
+
+    function updateTimer() {
+      if (!callStart) return;
+      const sec = Math.floor((Date.now() - callStart) / 1000);
+      const m = Math.floor(sec / 60);
+      const s = sec % 60;
+      timerEl.textContent = m + ':' + (s < 10 ? '0' : '') + s;
+    }
+  </script>
+</body>
+</html>
