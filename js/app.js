@@ -11,7 +11,14 @@
   let isDefaultView = false;
   let assistantMode = 'tia';    // 'tia', 'advisor-priya', 'advisor-rahul'
   let nameMode = 'no-name';     // 'no-name', 'name'
-  const customerName = 'Amit';  // Simulated captured name
+  let customerName = 'Amit';    // Simulated captured name (overwritten by API)
+
+  // ── API Configuration ──
+  const API_BASE = 'http://localhost:8000';
+
+  // ── Voice Call State ──
+  let _callFrame = null;
+  let _detectedScenarioId = null;
 
   // ── DOM References ──
   const $ = (sel) => document.querySelector(sel);
@@ -20,9 +27,20 @@
   // ── Initialise ──
   function init() {
     const urlParams = new URLSearchParams(window.location.search);
-    const scenarioId = parseInt(urlParams.get('s')) || 20;
+    const refHash = urlParams.get('ref');
+
+    // If ref parameter exists, fetch personalisation from API
+    if (refHash) {
+      fetchPersonalisation(refHash);
+    }
+
+    // Also support direct scenario ID via ?s= (numeric or code)
+    const sParam = urlParams.get('s');
+    const scenarioId = parseInt(sParam) || 20;
     $('#scenario-selector').value = scenarioId;
-    applyScenario(scenarioId);
+    if (!refHash) {
+      applyScenario(scenarioId);
+    }
 
     // Demo bar controls
     $('#scenario-selector').addEventListener('change', (e) => {
@@ -84,8 +102,160 @@
       reapplyGreeting();
     });
 
+    // Need Help button — start voice call with TIA
+    $('#help-btn').addEventListener('click', startVoiceCall);
+
     // Initial avatar setup
     updateAssistantAvatar();
+  }
+
+  // ── Voice Call with TIA (via Daily.co — no backend needed) ──
+
+  function _getRoomParams() {
+    const urlParams = new URLSearchParams(window.location.search);
+    return {
+      room: urlParams.get('room'),
+      token: urlParams.get('token'),
+    };
+  }
+
+  async function startVoiceCall() {
+    const helpBtn = $('#help-btn');
+    const helpText = $('#help-btn-text');
+
+    // Toggle: if call active, end it
+    if (_callFrame) {
+      endVoiceCall();
+      return;
+    }
+
+    // Check if room params are in the URL (provided by bot.py)
+    const { room, token } = _getRoomParams();
+    if (!room || !token) {
+      alert(
+        'To talk to TIA, start the bot first:\n\n' +
+        '1. Run: python bot.py (in WSL)\n' +
+        '2. Copy the URL it prints\n' +
+        '3. Open that URL in your browser\n\n' +
+        'The URL includes the room connection details.'
+      );
+      return;
+    }
+
+    helpText.textContent = 'Connecting...';
+    helpBtn.disabled = true;
+
+    try {
+      // Create Daily call frame (audio-only, hidden iframe)
+      _callFrame = window.DailyIframe.createFrame({
+        iframeStyle: { display: 'none' },
+        showLeaveButton: false,
+        showFullscreenButton: false,
+      });
+
+      // When we join, update button
+      _callFrame.on('joined-meeting', () => {
+        helpText.textContent = 'End Call';
+        helpBtn.disabled = false;
+        helpBtn.classList.add('call-active');
+        showCallBanner('TIA is listening... speak naturally.');
+      });
+
+      // When call ends (we left), apply personalisation
+      _callFrame.on('left-meeting', () => {
+        onCallEnded();
+      });
+
+      // If bot leaves, end our side too
+      _callFrame.on('participant-left', (evt) => {
+        if (evt.participant.local === false) {
+          endVoiceCall();
+        }
+      });
+
+      // Listen for app messages from the bot (scenario detection)
+      _callFrame.on('app-message', (evt) => {
+        console.log('App message from bot:', evt.data);
+        const data = evt.data;
+
+        if (data.type === 'scenario_detected') {
+          _detectedScenarioId = data.scenario_id;
+          showCallBanner(
+            'Scenario detected: ' + data.scenario_name +
+            ' (confidence: ' + (data.confidence * 100).toFixed(0) + '%)'
+          );
+          // Update customer name if provided
+          if (data.customer_name) {
+            customerName = data.customer_name;
+            nameMode = 'name';
+          }
+        }
+
+        if (data.type === 'quote_ready') {
+          _detectedScenarioId = data.scenario_id;
+          showCallBanner('Your personalised quote is ready!');
+        }
+      });
+
+      // Join the room
+      await _callFrame.join({
+        url: room,
+        token: token,
+        startAudioOff: false,
+        startVideoOff: true,
+      });
+
+    } catch (err) {
+      console.error('Failed to start call:', err);
+      helpText.textContent = 'Need Help?';
+      helpBtn.disabled = false;
+      alert('Could not connect to TIA. The room may have expired.\nRestart bot.py and open the new URL.');
+    }
+  }
+
+  function endVoiceCall() {
+    if (_callFrame) {
+      try { _callFrame.leave(); } catch (e) { /* ignore */ }
+      try { _callFrame.destroy(); } catch (e) { /* ignore */ }
+      _callFrame = null;
+    }
+  }
+
+  function onCallEnded() {
+    const helpBtn = $('#help-btn');
+    const helpText = $('#help-btn-text');
+    helpBtn.classList.remove('call-active');
+    helpBtn.disabled = false;
+
+    if (_callFrame) {
+      try { _callFrame.destroy(); } catch (e) { /* ignore */ }
+      _callFrame = null;
+    }
+
+    // Apply personalisation based on detected scenario
+    if (_detectedScenarioId) {
+      helpText.textContent = 'Call Again';
+      showCallBanner('Loading your personalised quote...');
+      setTimeout(() => {
+        applyScenario(_detectedScenarioId);
+        if ($('#scenario-selector')) {
+          $('#scenario-selector').value = _detectedScenarioId;
+        }
+        showCallBanner('Quote personalised based on your conversation with TIA.');
+      }, 500);
+    } else {
+      helpText.textContent = 'Need Help?';
+    }
+  }
+
+  function showCallBanner(message) {
+    const banner = $('#scenario-banner');
+    if (banner) {
+      banner.style.display = '';
+      banner.className = 'scenario-banner bg-blue';
+      $('#banner-headline').textContent = 'TIA Voice Call';
+      $('#banner-body').textContent = message;
+    }
   }
 
   // Run init immediately if DOM is ready, otherwise wait
@@ -658,6 +828,79 @@
       $('#tia-text').textContent = personaliseGreeting('Your personalised quote is ready!');
     } else if (currentScenario) {
       $('#tia-text').textContent = personaliseGreeting(currentScenario.tiaGreeting);
+    }
+  }
+
+  // ── API Integration: Fetch personalisation from backend ──
+  async function fetchPersonalisation(refHash) {
+    try {
+      const resp = await fetch(`${API_BASE}/api/personalisation/${refHash}`);
+      const config = await resp.json();
+
+      if (config.error) {
+        console.warn('API returned error:', config.message);
+        // Show fallback: use default scenario
+        applyScenario(20);
+        showExpiredBanner(config.message);
+        return;
+      }
+
+      // Override customer name if returned by API
+      if (config.customerName) {
+        customerName = config.customerName;
+        nameMode = 'name';
+        if ($('#name-mode')) $('#name-mode').value = 'name';
+      }
+
+      // Map API config to local scenario format and apply
+      const scenarioId = config.scenarioId || 20;
+      if ($('#scenario-selector')) {
+        $('#scenario-selector').value = scenarioId;
+      }
+
+      // If we have the scenario locally, apply it (with API overrides)
+      if (SCENARIOS[scenarioId]) {
+        applyScenario(scenarioId);
+      } else {
+        applyScenario(20);
+      }
+
+      // Apply API-specific overrides on top of local scenario
+      if (config.tiaGreeting) {
+        $('#tia-text').textContent = personaliseGreeting(config.tiaGreeting);
+      }
+      if (config.staleBanner) {
+        showStaleBanner(config.createdAt);
+      }
+
+      console.log('Personalisation loaded from API:', config);
+
+    } catch (err) {
+      console.warn('Failed to fetch personalisation from API:', err);
+      // Fallback: apply default scenario from local data
+      applyScenario(20);
+    }
+  }
+
+  function showExpiredBanner(message) {
+    const banner = $('#scenario-banner');
+    if (banner) {
+      banner.style.display = '';
+      banner.className = 'scenario-banner bg-amber';
+      $('#banner-headline').textContent = 'Link Expired';
+      $('#banner-body').textContent = message || 'This link has expired. Enter your mobile number to get a fresh quote.';
+    }
+  }
+
+  function showStaleBanner(createdAt) {
+    const banner = $('#scenario-banner');
+    if (banner) {
+      const dateStr = createdAt ? new Date(createdAt).toLocaleDateString('en-IN') : 'a while ago';
+      const staleLine = document.createElement('p');
+      staleLine.className = 'stale-warning';
+      staleLine.textContent = `Your quote was generated on ${dateStr}. Prices may have been updated.`;
+      staleLine.style.cssText = 'color:#B8860B;font-size:12px;margin-top:8px;font-weight:500;';
+      banner.appendChild(staleLine);
     }
   }
 })();

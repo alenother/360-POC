@@ -149,6 +149,10 @@ button { cursor: pointer; border: none; background: none; font-family: var(--fon
   transition: all var(--duration-micro) var(--ease-out);
 }
 .help-btn:hover { background: var(--blue-subtle); transform: translateY(-1px); box-shadow: var(--shadow-card); }
+.help-btn.call-active { background: #DC2626; color: #fff; border-color: #DC2626; animation: pulse-red 2s infinite; }
+.help-btn.call-active:hover { background: #B91C1C; }
+.help-btn.call-active svg { stroke: #fff; }
+@keyframes pulse-red { 0%, 100% { box-shadow: 0 0 0 0 rgba(220,38,38,0.4); } 50% { box-shadow: 0 0 0 8px rgba(220,38,38,0); } }
 .help-btn svg { width: 16px; height: 16px; stroke: var(--ink-70); }
 
 /* TIA / Advisor Greeting — centered */
