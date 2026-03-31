@@ -146,11 +146,10 @@
     helpBtn.disabled = true;
 
     try {
-      // Create Daily call frame (audio-only, hidden iframe)
-      _callFrame = window.DailyIframe.createFrame({
-        iframeStyle: { display: 'none' },
-        showLeaveButton: false,
-        showFullscreenButton: false,
+      // Create Daily call object (headless — audio only, no iframe needed)
+      _callFrame = window.DailyIframe.createCallObject({
+        audioSource: true,
+        videoSource: false,
       });
 
       // When we join, update button
