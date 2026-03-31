@@ -120,8 +120,7 @@
   }
 
   // ── Voice Call with TIA ──
-  // Opens call.html in a new tab with the Daily room.
-  // When call ends, call.html redirects back here with ?s=<scenarioId>.
+  // Opens call.html in a new tab with the Daily room params from URL.
 
   function startVoiceCall() {
     const urlParams = new URLSearchParams(window.location.search);
@@ -133,11 +132,14 @@
         'To talk to TIA, start the bot first:\n\n' +
         '1. Run: python bot.py (in WSL)\n' +
         '2. Copy the URL it prints\n' +
-        '3. Open that URL in your browser\n\n' +
-        'The URL includes the room connection details.'
+        '3. Open that URL in your browser\n' +
+        '4. Click "Need Help?" to start the call'
       );
       return;
     }
+
+    // Clear any previous scenario from localStorage
+    localStorage.removeItem('tia_scenario');
 
     // Open the call page in a new tab
     const callUrl = new URL('call.html', window.location.href);
@@ -145,6 +147,40 @@
     callUrl.searchParams.set('token', token);
     window.open(callUrl.toString(), '_blank');
   }
+
+  // ── Listen for scenario updates from call tab (via localStorage) ──
+  window.addEventListener('storage', (e) => {
+    if (e.key === 'tia_scenario' && e.newValue) {
+      try {
+        const data = JSON.parse(e.newValue);
+        if (data.scenario_id) {
+          console.log('Scenario received from call tab:', data);
+          applyScenario(data.scenario_id);
+          // Scroll to top to show the personalised view
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+      } catch (err) {
+        console.error('Failed to parse scenario data:', err);
+      }
+    }
+  });
+
+  // Also check when user switches back to this tab
+  document.addEventListener('visibilitychange', () => {
+    if (!document.hidden) {
+      const raw = localStorage.getItem('tia_scenario');
+      if (raw) {
+        try {
+          const data = JSON.parse(raw);
+          if (data.scenario_id) {
+            applyScenario(data.scenario_id);
+            localStorage.removeItem('tia_scenario');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }
+        } catch (err) { /* ignore */ }
+      }
+    }
+  });
 
   // Run init immediately if DOM is ready, otherwise wait
   if (document.readyState === 'loading') {

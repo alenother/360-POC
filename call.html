@@ -6,21 +6,48 @@
   <title>TIA Voice Call</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { background: #0a0a1a; height: 100vh; overflow: hidden; }
+    body { background: #0a0a1a; height: 100vh; overflow: hidden; font-family: -apple-system, BlinkMacSystemFont, sans-serif; }
     #call-frame { width: 100%; height: 100vh; border: none; }
     #banner {
       position: fixed; top: 0; left: 0; right: 0; z-index: 9999;
       background: linear-gradient(135deg, #0066CC, #00AAFF);
       color: #fff; text-align: center; padding: 10px 16px;
-      font-family: -apple-system, BlinkMacSystemFont, sans-serif;
       font-size: 14px; font-weight: 600;
       display: none;
     }
+    #end-call-bar {
+      position: fixed; bottom: 0; left: 0; right: 0; z-index: 9999;
+      background: rgba(10, 10, 26, 0.95);
+      padding: 16px; text-align: center;
+      backdrop-filter: blur(10px);
+    }
+    #end-call-btn {
+      background: #E53935; color: #fff; border: none; border-radius: 40px;
+      padding: 14px 40px; font-size: 16px; font-weight: 600;
+      cursor: pointer; transition: background 0.2s;
+      display: inline-flex; align-items: center; gap: 8px;
+    }
+    #end-call-btn:hover { background: #C62828; }
+    #end-call-btn svg { width: 20px; height: 20px; }
+    .ended-msg {
+      color: #fff; text-align: center; margin-top: 40vh;
+      font-size: 18px; line-height: 1.6;
+    }
+    .ended-msg .sub { color: #aaa; font-size: 14px; margin-top: 8px; }
   </style>
 </head>
 <body>
   <div id="banner"></div>
   <div id="call-frame"></div>
+  <div id="end-call-bar">
+    <button id="end-call-btn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M10.68 13.31a16 16 0 003.41 2.6l1.27-1.27a2 2 0 012.11-.45c.907.338 1.85.573 2.81.7A2 2 0 0122 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6A19.79 19.79 0 012.12 4.18 2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.362 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91"/>
+        <line x1="1" y1="1" x2="23" y2="23"/>
+      </svg>
+      End Call
+    </button>
+  </div>
 
   <script src="https://unpkg.com/@daily-co/daily-js"></script>
   <script>
@@ -28,19 +55,21 @@
     const roomUrl = params.get('room');
     const token = params.get('token');
     const banner = document.getElementById('banner');
+    const endCallBar = document.getElementById('end-call-bar');
 
     let detectedScenarioId = null;
+    let callFrame = null;
 
     if (!roomUrl) {
-      document.body.innerHTML = '<p style="color:#fff;text-align:center;margin-top:40vh;font-family:sans-serif;">Missing room URL. Start bot.py first.</p>';
+      document.body.innerHTML = '<p class="ended-msg">Missing room URL. Start the API server first.</p>';
     } else {
-      // Create Daily's prebuilt iframe UI (same as opening the room URL directly)
-      const callFrame = window.DailyIframe.createFrame(
+      // Create Daily's prebuilt iframe UI
+      callFrame = window.DailyIframe.createFrame(
         document.getElementById('call-frame'),
         {
           iframeStyle: {
             width: '100%',
-            height: '100vh',
+            height: 'calc(100vh - 70px)',
             border: 'none',
           },
           showLeaveButton: true,
@@ -56,22 +85,34 @@
           detectedScenarioId = data.scenario_id;
           banner.style.display = 'block';
           banner.textContent = 'Scenario detected: ' + data.scenario_name;
+          // Write to localStorage so the main tab can pick it up live
+          localStorage.setItem('tia_scenario', JSON.stringify({
+            scenario_id: data.scenario_id,
+            scenario_name: data.scenario_name,
+            timestamp: Date.now(),
+          }));
         }
         if (data.type === 'quote_ready') {
           detectedScenarioId = data.scenario_id;
           banner.style.display = 'block';
           banner.textContent = 'Your personalised quote is ready!';
+          localStorage.setItem('tia_scenario', JSON.stringify({
+            scenario_id: data.scenario_id,
+            quote_ready: true,
+            timestamp: Date.now(),
+          }));
         }
       });
 
-      // When user leaves the call, redirect back to main page
+      // When user leaves the call (via Daily's button OR our End Call button)
       callFrame.on('left-meeting', () => {
-        if (detectedScenarioId) {
-          const base = window.location.origin + window.location.pathname.replace('call.html', '');
-          window.location.href = base + '?s=' + detectedScenarioId;
-        } else {
-          const base = window.location.origin + window.location.pathname.replace('call.html', '');
-          window.location.href = base;
+        showEndScreen();
+      });
+
+      // Our End Call button
+      document.getElementById('end-call-btn').addEventListener('click', () => {
+        if (callFrame) {
+          callFrame.leave();
         }
       });
 
@@ -79,6 +120,30 @@
       const joinParams = { url: roomUrl };
       if (token) joinParams.token = token;
       callFrame.join(joinParams);
+    }
+
+    function showEndScreen() {
+      endCallBar.style.display = 'none';
+      banner.style.display = 'none';
+      const frame = document.getElementById('call-frame');
+      if (frame) frame.innerHTML = '';
+
+      if (detectedScenarioId) {
+        document.body.innerHTML = `
+          <div class="ended-msg">
+            ✓ Call ended — your quote page has been personalised!
+            <div class="sub">You can close this tab and check your quote page.</div>
+          </div>`;
+      } else {
+        document.body.innerHTML = `
+          <div class="ended-msg">
+            Call ended.
+            <div class="sub">You can close this tab.</div>
+          </div>`;
+      }
+
+      // Try to auto-close (works if this tab was opened by JS)
+      setTimeout(() => window.close(), 2000);
     }
   </script>
 </body>
