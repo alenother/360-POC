@@ -56,6 +56,7 @@
     const token = params.get('token');
     const banner = document.getElementById('banner');
     const customerEmail = params.get('email');
+    const customerName = params.get('name');
     const endCallBar = document.getElementById('end-call-bar');
 
     let detectedScenarioId = null;
@@ -90,6 +91,7 @@
           localStorage.setItem('tia_scenario', JSON.stringify({
             scenario_id: data.scenario_id,
             scenario_name: data.scenario_name,
+            customer_name: data.customer_name || customerName || '',
             timestamp: Date.now(),
           }));
         }
@@ -99,17 +101,22 @@
           banner.textContent = 'Your personalised quote is ready!';
           localStorage.setItem('tia_scenario', JSON.stringify({
             scenario_id: data.scenario_id,
+            customer_name: data.customer_name || customerName || '',
             quote_ready: true,
             timestamp: Date.now(),
           }));
         }
       });
 
-      // When joined, send customer email to bot so it can email the quote
+      // When joined, send customer info to bot so it can email the quote
       callFrame.on('joined-meeting', () => {
-        if (customerEmail) {
-          callFrame.sendAppMessage({ type: 'customer_info', email: customerEmail }, '*');
-          console.log('Sent customer email to bot:', customerEmail);
+        if (customerEmail || customerName) {
+          callFrame.sendAppMessage({
+            type: 'customer_info',
+            email: customerEmail || '',
+            name: customerName || '',
+          }, '*');
+          console.log('Sent customer info to bot:', customerEmail, customerName);
         }
       });
 

@@ -11,10 +11,7 @@
   let isDefaultView = false;
   let assistantMode = 'tia';    // 'tia', 'advisor-priya', 'advisor-rahul'
   let nameMode = 'no-name';     // 'no-name', 'name'
-  let customerName = 'Amit';    // Simulated captured name (overwritten by API)
-
-  // ── API Configuration ──
-  const API_BASE = 'http://localhost:8000';
+  let customerName = localStorage.getItem('customer_name') || '';
 
   // ── Voice Call State ──
 
@@ -35,13 +32,21 @@
       if (customerEmail) {
         gate.classList.add('hidden');
         setTimeout(() => gate.remove(), 500);
+        // Activate name mode if name exists
+        if (customerName) nameMode = 'name';
       } else {
         gateForm.addEventListener('submit', (e) => {
           e.preventDefault();
+          const nameInput = $('#customer-name');
           const emailInput = $('#customer-email');
           if (emailInput && emailInput.value) {
             customerEmail = emailInput.value.trim();
             localStorage.setItem('customer_email', customerEmail);
+            if (nameInput && nameInput.value) {
+              customerName = nameInput.value.trim();
+              localStorage.setItem('customer_name', customerName);
+              nameMode = 'name';
+            }
             gate.classList.add('hidden');
             setTimeout(() => gate.remove(), 500);
           }
@@ -55,21 +60,15 @@
     }
 
     const urlParams = new URLSearchParams(window.location.search);
-    const refHash = urlParams.get('ref');
-
-    // If ref parameter exists, fetch personalisation from API
-    if (refHash) {
-      fetchPersonalisation(refHash);
-    }
 
     // Apply scenario only if ?s= is explicitly set (post-call personalisation)
     // Otherwise show default non-personalised view
     const sParam = urlParams.get('s');
-    if (sParam && !refHash) {
+    if (sParam) {
       const scenarioId = parseInt(sParam) || 20;
       if ($('#scenario-selector')) $('#scenario-selector').value = scenarioId;
       applyScenario(scenarioId);
-    } else if (!refHash) {
+    } else {
       applyDefault();
     }
 
@@ -180,19 +179,30 @@
     callUrl.searchParams.set('room', room);
     callUrl.searchParams.set('token', token);
     if (customerEmail) callUrl.searchParams.set('email', customerEmail);
+    if (customerName) callUrl.searchParams.set('name', customerName);
     window.open(callUrl.toString(), '_blank');
   }
 
   // ── Listen for scenario updates from call tab (via localStorage) ──
+  function applyScenarioFromData(data) {
+    // Update customer name if bot captured it and we don't have one yet
+    if (data.customer_name && !customerName) {
+      customerName = data.customer_name;
+      localStorage.setItem('customer_name', customerName);
+      nameMode = 'name';
+    }
+    applyScenario(data.scenario_id);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
   window.addEventListener('storage', (e) => {
     if (e.key === 'tia_scenario' && e.newValue) {
       try {
         const data = JSON.parse(e.newValue);
         if (data.scenario_id) {
           console.log('Scenario received from call tab:', data);
-          applyScenario(data.scenario_id);
-          // Scroll to top to show the personalised view
-          window.scrollTo({ top: 0, behavior: 'smooth' });
+          applyScenarioFromData(data);
+          localStorage.removeItem('tia_scenario');
         }
       } catch (err) {
         console.error('Failed to parse scenario data:', err);
@@ -208,9 +218,8 @@
         try {
           const data = JSON.parse(raw);
           if (data.scenario_id) {
-            applyScenario(data.scenario_id);
+            applyScenarioFromData(data);
             localStorage.removeItem('tia_scenario');
-            window.scrollTo({ top: 0, behavior: 'smooth' });
           }
         } catch (err) { /* ignore */ }
       }
@@ -790,76 +799,4 @@
     }
   }
 
-  // ── API Integration: Fetch personalisation from backend ──
-  async function fetchPersonalisation(refHash) {
-    try {
-      const resp = await fetch(`${API_BASE}/api/personalisation/${refHash}`);
-      const config = await resp.json();
-
-      if (config.error) {
-        console.warn('API returned error:', config.message);
-        // Show fallback: use default scenario
-        applyScenario(20);
-        showExpiredBanner(config.message);
-        return;
-      }
-
-      // Override customer name if returned by API
-      if (config.customerName) {
-        customerName = config.customerName;
-        nameMode = 'name';
-        if ($('#name-mode')) $('#name-mode').value = 'name';
-      }
-
-      // Map API config to local scenario format and apply
-      const scenarioId = config.scenarioId || 20;
-      if ($('#scenario-selector')) {
-        $('#scenario-selector').value = scenarioId;
-      }
-
-      // If we have the scenario locally, apply it (with API overrides)
-      if (SCENARIOS[scenarioId]) {
-        applyScenario(scenarioId);
-      } else {
-        applyScenario(20);
-      }
-
-      // Apply API-specific overrides on top of local scenario
-      if (config.tiaGreeting) {
-        $('#tia-text').textContent = personaliseGreeting(config.tiaGreeting);
-      }
-      if (config.staleBanner) {
-        showStaleBanner(config.createdAt);
-      }
-
-      console.log('Personalisation loaded from API:', config);
-
-    } catch (err) {
-      console.warn('Failed to fetch personalisation from API:', err);
-      // Fallback: apply default scenario from local data
-      applyScenario(20);
-    }
-  }
-
-  function showExpiredBanner(message) {
-    const banner = $('#scenario-banner');
-    if (banner) {
-      banner.style.display = '';
-      banner.className = 'scenario-banner bg-amber';
-      $('#banner-headline').textContent = 'Link Expired';
-      $('#banner-body').textContent = message || 'This link has expired. Enter your mobile number to get a fresh quote.';
-    }
-  }
-
-  function showStaleBanner(createdAt) {
-    const banner = $('#scenario-banner');
-    if (banner) {
-      const dateStr = createdAt ? new Date(createdAt).toLocaleDateString('en-IN') : 'a while ago';
-      const staleLine = document.createElement('p');
-      staleLine.className = 'stale-warning';
-      staleLine.textContent = `Your quote was generated on ${dateStr}. Prices may have been updated.`;
-      staleLine.style.cssText = 'color:#B8860B;font-size:12px;margin-top:8px;font-weight:500;';
-      banner.appendChild(staleLine);
-    }
-  }
 })();

@@ -7,8 +7,6 @@
   <link rel="stylesheet" href="css/styles.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@200;300;400;500;600;700&display=swap" rel="stylesheet">
-  <!-- Daily.co client SDK for voice calls -->
-  <script crossorigin src="https://unpkg.com/@daily-co/daily-js"></script>
 </head>
 <body>
 
@@ -20,9 +18,10 @@
         <span class="logo-aig">Insurance</span>
       </div>
       <h1 class="email-gate-title">Get Your Personalised Health Insurance Quote</h1>
-      <p class="email-gate-sub">Enter your email to view plans tailored just for you</p>
+      <p class="email-gate-sub">Tell us a bit about yourself to get started</p>
       <form id="email-gate-form" class="email-gate-form">
-        <input type="email" id="customer-email" class="email-gate-input" placeholder="Enter your email address" required autocomplete="email" />
+        <input type="text" id="customer-name" class="email-gate-input" placeholder="Your name" required autocomplete="given-name" />
+        <input type="email" id="customer-email" class="email-gate-input" placeholder="Your email address" required autocomplete="email" />
         <button type="submit" class="email-gate-btn">View My Quote</button>
       </form>
       <p class="email-gate-note">We'll send your personalised quote to this email after your consultation with TIA.</p>
