@@ -33,7 +33,10 @@
         gate.classList.add('hidden');
         setTimeout(() => gate.remove(), 500);
         // Activate name mode if name exists
-        if (customerName) nameMode = 'name';
+        if (customerName) {
+          nameMode = 'name';
+          updateNameModeLabel();
+        }
       } else {
         gateForm.addEventListener('submit', (e) => {
           e.preventDefault();
@@ -46,6 +49,7 @@
               customerName = nameInput.value.trim();
               localStorage.setItem('customer_name', customerName);
               nameMode = 'name';
+              updateNameModeLabel();
             }
             gate.classList.add('hidden');
             setTimeout(() => gate.remove(), 500);
@@ -148,8 +152,9 @@
       });
     }
 
-    // Initial avatar setup
+    // Initial avatar + name label setup
     updateAssistantAvatar();
+    updateNameModeLabel();
   }
 
   // ── Voice Call with TIA ──
@@ -190,6 +195,7 @@
       customerName = data.customer_name;
       localStorage.setItem('customer_name', customerName);
       nameMode = 'name';
+      updateNameModeLabel();
     }
     applyScenario(data.scenario_id);
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -789,6 +795,15 @@
       return 'Hi ' + customerName + ', ' + lower;
     }
     return greeting;
+  }
+
+  // ── Update name-mode dropdown label with actual customer name ──
+  function updateNameModeLabel() {
+    const opt = $('#name-mode-option');
+    if (opt) opt.textContent = customerName || 'No Name';
+    // Also sync the dropdown selection
+    const sel = $('#name-mode');
+    if (sel) sel.value = nameMode;
   }
 
   function reapplyGreeting() {

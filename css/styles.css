@@ -87,11 +87,11 @@ button { cursor: pointer; border: none; background: none; font-family: var(--fon
    DEMO BAR
    ============================================ */
 .demo-bar {
-  position: sticky; top: 0; z-index: 1000;
+  position: static;
   background: rgba(255,255,255,0.8);
   backdrop-filter: blur(24px);
   padding: 6px var(--s4);
-  border-bottom: 1px solid var(--ink-08);
+  border-top: 1px solid var(--ink-08);
   height: 40px; display: flex; align-items: center;
 }
 .demo-bar-inner {

@@ -28,59 +28,6 @@
     </div>
   </div>
 
-  <!-- Admin Scenario Selector (for testing/demo only) -->
-  <div id="demo-bar" class="demo-bar">
-    <div class="demo-bar-inner">
-      <span class="demo-label">Admin Mode</span>
-      <select id="scenario-selector">
-        <option value="0" selected>Default (No personalisation)</option>
-        <option value="1">1 - Price-conscious buyer</option>
-        <option value="2">2 - High-value seeker</option>
-        <option value="3">3 - EMI / instalment seeker</option>
-        <option value="4">4 - No-claim bonus maximiser</option>
-        <option value="5">5 - Salaried with employer cover</option>
-        <option value="6">6 - Self-employed / freelancer</option>
-        <option value="7">7 - Government / PSU employee</option>
-        <option value="8">8 - NRI / global professional</option>
-        <option value="9">9 - Family floater buyer</option>
-        <option value="10">10 - Newly married couple</option>
-        <option value="11">11 - Expecting parent</option>
-        <option value="12">12 - Parent covering seniors</option>
-        <option value="13">13 - Young single individual</option>
-        <option value="14">14 - Pre-existing: diabetes</option>
-        <option value="15">15 - Pre-existing: cardiac</option>
-        <option value="16">16 - Critical illness risk</option>
-        <option value="17">17 - Wellness seeker</option>
-        <option value="18">18 - Mental health seeker</option>
-        <option value="19">19 - Frequent traveller</option>
-        <option value="20">20 - First-time buyer</option>
-        <option value="21">21 - Policy switcher</option>
-        <option value="22">22 - Top-up seeker</option>
-        <option value="23">23 - Lapsed policyholder</option>
-        <option value="24">24 - Renewal-ready customer</option>
-        <option value="25">25 - Comparison-fatigued</option>
-        <option value="26">26 - Cart abandoner</option>
-        <option value="27">27 - Referral buyer</option>
-        <option value="28">28 - Mobile-first / low-bandwidth</option>
-        <option value="29">29 - Agent call - no time</option>
-        <option value="30">30 - DIY buyer</option>
-        <option value="31">31 - Tier-2/3 city</option>
-        <option value="32">32 - Metro high-income</option>
-      </select>
-      <button id="toggle-default" class="demo-toggle">Show Default</button>
-      <span class="demo-divider">|</span>
-      <select id="assistant-mode" class="demo-select-sm">
-        <option value="tia">TIA (AI Bot)</option>
-        <option value="advisor-priya">Advisor: Priya</option>
-        <option value="advisor-rahul">Advisor: Rahul</option>
-      </select>
-      <select id="name-mode" class="demo-select-sm">
-        <option value="no-name">No Name</option>
-        <option value="name">Hi Amit</option>
-      </select>
-    </div>
-  </div>
-
   <!-- ZONE 1: Header Bar -->
   <header class="header-bar" id="zone-header">
     <div class="header-inner">
@@ -488,6 +435,59 @@
       </div>
     </div>
   </footer>
+
+  <!-- Admin Scenario Selector (for testing/demo only) — after footer, non-sticky -->
+  <div id="demo-bar" class="demo-bar">
+    <div class="demo-bar-inner">
+      <span class="demo-label">Admin Mode</span>
+      <select id="scenario-selector">
+        <option value="0" selected>Default (No personalisation)</option>
+        <option value="1">1 - Price-conscious buyer</option>
+        <option value="2">2 - High-value seeker</option>
+        <option value="3">3 - EMI / instalment seeker</option>
+        <option value="4">4 - No-claim bonus maximiser</option>
+        <option value="5">5 - Salaried with employer cover</option>
+        <option value="6">6 - Self-employed / freelancer</option>
+        <option value="7">7 - Government / PSU employee</option>
+        <option value="8">8 - NRI / global professional</option>
+        <option value="9">9 - Family floater buyer</option>
+        <option value="10">10 - Newly married couple</option>
+        <option value="11">11 - Expecting parent</option>
+        <option value="12">12 - Parent covering seniors</option>
+        <option value="13">13 - Young single individual</option>
+        <option value="14">14 - Pre-existing: diabetes</option>
+        <option value="15">15 - Pre-existing: cardiac</option>
+        <option value="16">16 - Critical illness risk</option>
+        <option value="17">17 - Wellness seeker</option>
+        <option value="18">18 - Mental health seeker</option>
+        <option value="19">19 - Frequent traveller</option>
+        <option value="20">20 - First-time buyer</option>
+        <option value="21">21 - Policy switcher</option>
+        <option value="22">22 - Top-up seeker</option>
+        <option value="23">23 - Lapsed policyholder</option>
+        <option value="24">24 - Renewal-ready customer</option>
+        <option value="25">25 - Comparison-fatigued</option>
+        <option value="26">26 - Cart abandoner</option>
+        <option value="27">27 - Referral buyer</option>
+        <option value="28">28 - Mobile-first / low-bandwidth</option>
+        <option value="29">29 - Agent call - no time</option>
+        <option value="30">30 - DIY buyer</option>
+        <option value="31">31 - Tier-2/3 city</option>
+        <option value="32">32 - Metro high-income</option>
+      </select>
+      <button id="toggle-default" class="demo-toggle">Show Default</button>
+      <span class="demo-divider">|</span>
+      <select id="assistant-mode" class="demo-select-sm">
+        <option value="tia">TIA (AI Bot)</option>
+        <option value="advisor-priya">Advisor: Priya</option>
+        <option value="advisor-rahul">Advisor: Rahul</option>
+      </select>
+      <select id="name-mode" class="demo-select-sm">
+        <option value="no-name">No Name</option>
+        <option value="name" id="name-mode-option">No Name</option>
+      </select>
+    </div>
+  </div>
 
   <script src="js/scenarios.js"></script>
   <script src="js/app.js"></script>
