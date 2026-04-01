@@ -27,9 +27,12 @@
     // Email gate logic
     const gate = $('#email-gate');
     const gateForm = $('#email-gate-form');
+    const urlParams = new URLSearchParams(window.location.search);
+    const hasRoomParams = urlParams.has('room') && urlParams.has('token');
+
     if (gate && gateForm) {
-      // If email already captured, skip the gate
-      if (customerEmail) {
+      // Skip gate if email already captured OR if arriving via bot URL with room params
+      if (customerEmail || hasRoomParams) {
         gate.classList.add('hidden');
         setTimeout(() => gate.remove(), 500);
         // Activate name mode if name exists
@@ -62,8 +65,6 @@
     if ($('#help-btn')) {
       $('#help-btn').addEventListener('click', startVoiceCall);
     }
-
-    const urlParams = new URLSearchParams(window.location.search);
 
     // Apply scenario only if ?s= is explicitly set (post-call personalisation)
     // Otherwise show default non-personalised view
