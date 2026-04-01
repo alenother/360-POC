@@ -55,6 +55,7 @@
     const roomUrl = params.get('room');
     const token = params.get('token');
     const banner = document.getElementById('banner');
+    const customerEmail = params.get('email');
     const endCallBar = document.getElementById('end-call-bar');
 
     let detectedScenarioId = null;
@@ -101,6 +102,14 @@
             quote_ready: true,
             timestamp: Date.now(),
           }));
+        }
+      });
+
+      // When joined, send customer email to bot so it can email the quote
+      callFrame.on('joined-meeting', () => {
+        if (customerEmail) {
+          callFrame.sendAppMessage({ type: 'customer_info', email: customerEmail }, '*');
+          console.log('Sent customer email to bot:', customerEmail);
         }
       });
 

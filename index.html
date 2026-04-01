@@ -12,11 +12,29 @@
 </head>
 <body>
 
-  <!-- Demo Scenario Selector (for testing/demo only) -->
+  <!-- EMAIL GATE: Landing screen to capture customer email -->
+  <div id="email-gate" class="email-gate">
+    <div class="email-gate-card">
+      <div class="email-gate-logo">
+        <span class="logo-tata">XYZ</span>
+        <span class="logo-aig">Insurance</span>
+      </div>
+      <h1 class="email-gate-title">Get Your Personalised Health Insurance Quote</h1>
+      <p class="email-gate-sub">Enter your email to view plans tailored just for you</p>
+      <form id="email-gate-form" class="email-gate-form">
+        <input type="email" id="customer-email" class="email-gate-input" placeholder="Enter your email address" required autocomplete="email" />
+        <button type="submit" class="email-gate-btn">View My Quote</button>
+      </form>
+      <p class="email-gate-note">We'll send your personalised quote to this email after your consultation with TIA.</p>
+    </div>
+  </div>
+
+  <!-- Admin Scenario Selector (for testing/demo only) -->
   <div id="demo-bar" class="demo-bar">
     <div class="demo-bar-inner">
-      <span class="demo-label">Demo Mode</span>
+      <span class="demo-label">Admin Mode</span>
       <select id="scenario-selector">
+        <option value="0" selected>Default (No personalisation)</option>
         <option value="1">1 - Price-conscious buyer</option>
         <option value="2">2 - High-value seeker</option>
         <option value="3">3 - EMI / instalment seeker</option>
@@ -36,7 +54,7 @@
         <option value="17">17 - Wellness seeker</option>
         <option value="18">18 - Mental health seeker</option>
         <option value="19">19 - Frequent traveller</option>
-        <option value="20" selected>20 - First-time buyer</option>
+        <option value="20">20 - First-time buyer</option>
         <option value="21">21 - Policy switcher</option>
         <option value="22">22 - Top-up seeker</option>
         <option value="23">23 - Lapsed policyholder</option>

@@ -22,8 +22,33 @@
   const $ = (sel) => document.querySelector(sel);
   const $$ = (sel) => document.querySelectorAll(sel);
 
+  // ── Customer email (captured at gate) ──
+  let customerEmail = localStorage.getItem('customer_email') || '';
+
   // ── Initialise ──
   function init() {
+    // Email gate logic
+    const gate = $('#email-gate');
+    const gateForm = $('#email-gate-form');
+    if (gate && gateForm) {
+      // If email already captured, skip the gate
+      if (customerEmail) {
+        gate.classList.add('hidden');
+        setTimeout(() => gate.remove(), 500);
+      } else {
+        gateForm.addEventListener('submit', (e) => {
+          e.preventDefault();
+          const emailInput = $('#customer-email');
+          if (emailInput && emailInput.value) {
+            customerEmail = emailInput.value.trim();
+            localStorage.setItem('customer_email', customerEmail);
+            gate.classList.add('hidden');
+            setTimeout(() => gate.remove(), 500);
+          }
+        });
+      }
+    }
+
     // CRITICAL: Register help button handler FIRST (before anything that might throw)
     if ($('#help-btn')) {
       $('#help-btn').addEventListener('click', startVoiceCall);
@@ -37,23 +62,32 @@
       fetchPersonalisation(refHash);
     }
 
-    // Also support direct scenario ID via ?s= (numeric or code)
+    // Apply scenario only if ?s= is explicitly set (post-call personalisation)
+    // Otherwise show default non-personalised view
     const sParam = urlParams.get('s');
-    const scenarioId = parseInt(sParam) || 20;
-    if ($('#scenario-selector')) $('#scenario-selector').value = scenarioId;
-    if (!refHash) {
+    if (sParam && !refHash) {
+      const scenarioId = parseInt(sParam) || 20;
+      if ($('#scenario-selector')) $('#scenario-selector').value = scenarioId;
       applyScenario(scenarioId);
+    } else if (!refHash) {
+      applyDefault();
     }
 
     // Demo bar controls (safe — null-checked)
     if ($('#scenario-selector')) {
       $('#scenario-selector').addEventListener('change', (e) => {
-        isDefaultView = false;
-        if ($('#toggle-default')) {
-          $('#toggle-default').classList.remove('active');
-          $('#toggle-default').textContent = 'Show Default';
+        const val = parseInt(e.target.value);
+        if (val === 0) {
+          isDefaultView = true;
+          applyDefault();
+        } else {
+          isDefaultView = false;
+          if ($('#toggle-default')) {
+            $('#toggle-default').classList.remove('active');
+            $('#toggle-default').textContent = 'Show Default';
+          }
+          applyScenario(val);
         }
-        applyScenario(parseInt(e.target.value));
       });
     }
 
@@ -141,10 +175,11 @@
     // Clear any previous scenario from localStorage
     localStorage.removeItem('tia_scenario');
 
-    // Open the call page in a new tab
+    // Open the call page in a new tab (pass email for bot to send quote)
     const callUrl = new URL('call.html', window.location.href);
     callUrl.searchParams.set('room', room);
     callUrl.searchParams.set('token', token);
+    if (customerEmail) callUrl.searchParams.set('email', customerEmail);
     window.open(callUrl.toString(), '_blank');
   }
 
