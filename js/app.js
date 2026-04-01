@@ -787,7 +787,7 @@
 
   // ── Greeting with name prefix ──
   function personaliseGreeting(greeting) {
-    if (nameMode === 'name') {
+    if (nameMode === 'name' && customerName) {
       // Prefix with "Hi Name, " — handle existing "Hi " gracefully
       if (greeting.toLowerCase().startsWith('hi ')) return greeting;
       // Lower-case first letter of greeting when prefixing
