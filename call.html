@@ -132,9 +132,10 @@
         }
       });
 
-      // Join the room
+      // Join the room — pass userName to skip Daily's prejoin name prompt
       const joinParams = { url: roomUrl };
       if (token) joinParams.token = token;
+      if (customerName) joinParams.userName = customerName;
       callFrame.join(joinParams);
     }
 
