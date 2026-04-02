@@ -31,8 +31,8 @@
     const hasRoomParams = urlParams.has('room') && urlParams.has('token');
 
     if (gate && gateForm) {
-      // Skip gate if email already captured OR if arriving via bot URL with room params
-      if (customerEmail || hasRoomParams) {
+      // Skip gate only if email already captured from a previous visit
+      if (customerEmail) {
         gate.classList.add('hidden');
         setTimeout(() => gate.remove(), 500);
         // Activate name mode if name exists
